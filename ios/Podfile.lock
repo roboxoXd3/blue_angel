@@ -1,0 +1,95 @@
+PODS:
+  - contacts_service (0.2.2):
+    - Flutter
+  - device_id (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - flutter_share (0.0.1):
+    - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
+  - "geolocator (6.0.0+3)":
+    - Flutter
+  - image_picker (0.0.1):
+    - Flutter
+  - launch_review (0.0.1):
+    - Flutter
+  - "permission_handler (5.0.1+1)":
+    - Flutter
+  - rate_my_app (0.7.1):
+    - Flutter
+  - share (0.0.1):
+    - Flutter
+  - shared_preferences (0.0.1):
+    - Flutter
+  - Toast (4.0.0)
+  - url_launcher (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - contacts_service (from `.symlinks/plugins/contacts_service/ios`)
+  - device_id (from `.symlinks/plugins/device_id/ios`)
+  - Flutter (from `Flutter`)
+  - flutter_share (from `.symlinks/plugins/flutter_share/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - geolocator (from `.symlinks/plugins/geolocator/ios`)
+  - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - launch_review (from `.symlinks/plugins/launch_review/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - rate_my_app (from `.symlinks/plugins/rate_my_app/ios`)
+  - share (from `.symlinks/plugins/share/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Toast
+
+EXTERNAL SOURCES:
+  contacts_service:
+    :path: ".symlinks/plugins/contacts_service/ios"
+  device_id:
+    :path: ".symlinks/plugins/device_id/ios"
+  Flutter:
+    :path: Flutter
+  flutter_share:
+    :path: ".symlinks/plugins/flutter_share/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
+  geolocator:
+    :path: ".symlinks/plugins/geolocator/ios"
+  image_picker:
+    :path: ".symlinks/plugins/image_picker/ios"
+  launch_review:
+    :path: ".symlinks/plugins/launch_review/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
+  rate_my_app:
+    :path: ".symlinks/plugins/rate_my_app/ios"
+  share:
+    :path: ".symlinks/plugins/share/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
+
+SPEC CHECKSUMS:
+  contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
+  device_id: 4a0bf078741a3eec6ba0e6cc72e786395d5991b0
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_share: 4be0208963c60b537e6255ed2ce1faae61cd9ac2
+  fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
+  geolocator: ba89529b110425143bd41707cc6853648df94b6a
+  image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  launch_review: 75d5a956ba8eaa493e9c9d4bf4c05e505e8d5ed0
+  permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
+  rate_my_app: 3b64dd0876bd286001595ee2e69193e757c4d77c
+  share: 0b2c3e82132f5888bccca3351c504d0003b3b410
+  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
+  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.9.3
