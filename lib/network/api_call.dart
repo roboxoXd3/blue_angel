@@ -22,6 +22,7 @@ import 'api_constants.dart';
 
 class ApiCall {
   static Map<String, dynamic> verifyData;
+
   static String token, tokenCall;
   static Map<String, dynamic> stateData;
   static List<dynamic> stateList;
@@ -46,6 +47,7 @@ class ApiCall {
     );
     if (response.statusCode == 200) {
       final String responseString = response.body;
+      print("About us page info" + responseString);
       return aboutUsResponseFromJson(responseString);
     } else {
       return null;
@@ -329,13 +331,15 @@ class ApiCall {
       // print(CustomView.base64String(document.readAsBytesSync()));
       try {
         return signUpResponseFromJson(responseString);
-      }catch(e){
+      } catch (e) {
         print(e);
-        return SignUpResponse(status: "error", message: "Mobile already exists!");
+        return SignUpResponse(
+            status: "error", message: "Mobile already exists!");
       }
     } else {
       print(response.statusCode);
-      return SignUpResponse(status: "api_error", message: "Mobile already exists!");
+      return SignUpResponse(
+          status: "api_error", message: "Mobile already exists!");
       return null;
     }
   }

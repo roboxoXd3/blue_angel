@@ -32,6 +32,7 @@ class AssignCompleteSurvey extends StatefulWidget {
 class _AssignCompleteSurveyState extends State<AssignCompleteSurvey> {
   String startDate, lastDate;
   int _count;
+  int top_nav;
   String status;
   List list;
   List fieldName = new List();
@@ -40,6 +41,7 @@ class _AssignCompleteSurveyState extends State<AssignCompleteSurvey> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       accessToken = sharedPreferences.getString("access_token");
+      top_nav = sharedPreferences.getInt("top_nav");
     });
   }
 

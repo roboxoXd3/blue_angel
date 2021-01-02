@@ -1,3 +1,4 @@
+import 'package:blue_angel/models/bannerResponse.dart';
 import 'package:blue_angel/models/surveyReportResponse.dart';
 import 'package:blue_angel/screens/complete_survey_show_customer_data.dart';
 import 'package:blue_angel/screens/report_customer_data_show.dart';
@@ -8,16 +9,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ReportPage extends StatefulWidget {
   final SurveyReportResponse surveyReportResponse;
+  final BannerResponse bannerResponse;
   final bool completeOrReport;
   ReportPage({
     @required this.surveyReportResponse,
     @required this.completeOrReport,
+    @required this.bannerResponse,
   });
   @override
   _ReportPageState createState() => _ReportPageState();
 }
 
 class _ReportPageState extends State<ReportPage> {
+  int top_nav;
   String accessToken;
   getDataFromSharedPrefs() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -29,25 +33,24 @@ class _ReportPageState extends State<ReportPage> {
   @override
   void initState() {
     getDataFromSharedPrefs();
+    String ss = widget.bannerResponse.data.top_nav;
+    String s = "0xff" + ss.substring(1);
+    top_nav = int.parse(s);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomView.appBarCustom(
-        'Arrow-Icon-01',
-        'Arrow-Icon-01',
-        () {
-          // Navigator.of(context).pop();
-        },
-        () {
-          Navigator.of(context).pop();
-        },
-        isLeading: false,
-        isAction: true,
-        title: widget.completeOrReport ? 'completed survey' : 'report survey',
-      ),
+      appBar: CustomView.appBarCustom('Arrow-Icon-01', 'Arrow-Icon-01', () {
+        // Navigator.of(context).pop();
+      }, () {
+        Navigator.of(context).pop();
+      },
+          isLeading: false,
+          isAction: true,
+          title: widget.completeOrReport ? 'completed survey' : 'report survey',
+          top_nav: top_nav),
       body: SingleChildScrollView(
         child: CustomView.buildContainerBackgroundImage(
           context: context,

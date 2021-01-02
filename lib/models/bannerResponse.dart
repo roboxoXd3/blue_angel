@@ -32,23 +32,35 @@ class BannerResponse {
 class Data {
   Data({
     this.dashboardImage,
+    this.dashboard_image2,
     this.contactEmail,
     this.contactNumber,
+    this.side_nav,
+    this.top_nav,
   });
 
   String dashboardImage;
+  String dashboard_image2;
   String contactEmail;
   String contactNumber;
+  String top_nav;
+  String side_nav;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         dashboardImage: json["dashboard_image"],
+    dashboard_image2:json["dashboard_image2"],
         contactEmail: json["contact_email"],
         contactNumber: json["contact_number"],
+        top_nav: json['top_nav'],
+        side_nav: json['side_nav'],
       );
 
   Map<String, dynamic> toJson() => {
         "dashboard_image": dashboardImage,
+    "dashboard_image2":dashboard_image2,
         "contact_email": contactEmail,
         "contact_number": contactNumber,
+        "top_nav": top_nav,
+        "side_nav": side_nav,
       };
 }

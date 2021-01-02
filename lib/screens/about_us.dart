@@ -1,4 +1,6 @@
 import 'package:blue_angel/models/aboutUsResponse.dart';
+import 'package:blue_angel/models/bannerResponse.dart';
+import 'package:blue_angel/network/api_call.dart';
 import 'package:blue_angel/utlis/values/styles.dart';
 import 'package:blue_angel/widgets/custom_view.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AboutUs extends StatefulWidget {
   final AboutUsResponse aboutUsResponse;
-  AboutUs(this.aboutUsResponse);
+  final BannerResponse bannerResponse;
+  // final BannerResponse bannerResponse;
+  AboutUs(this.aboutUsResponse, this.bannerResponse);
   @override
   _AboutUsState createState() => _AboutUsState();
 }
@@ -14,10 +18,12 @@ class AboutUs extends StatefulWidget {
 class _AboutUsState extends State<AboutUs> {
   String img, content;
   String accessToken;
+  int top_nav;
   getDataFromSharedPrefs() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       accessToken = sharedPreferences.getString("access_token");
+      // top_nav = sharedPreferences.getInt('top_nav');
     });
   }
 
@@ -26,8 +32,13 @@ class _AboutUsState extends State<AboutUs> {
     getDataFromSharedPrefs();
     // getDataFromSharedPrefs();
     // ApiCall.getAboutPage();
+
     img = widget.aboutUsResponse.image;
     content = widget.aboutUsResponse.content;
+
+    String s = widget.bannerResponse.data.top_nav;
+    String ss = "0xff" + s.substring(1);
+    top_nav = int.parse(ss);
     super.initState();
   }
 
@@ -39,20 +50,12 @@ class _AboutUsState extends State<AboutUs> {
     print('img : $img');
     print('content : $content');
     return Scaffold(
-      appBar: CustomView.appBarCustom(
-        'Menu-Icon-01',
-        'Bt-Close-01',
-        () {
-          // _scaffoldKey.currentState.openDrawer();
-          // Navigator.of(context).pop();
-        },
-        () {
-          Navigator.of(context).pop();
-        },
-        isLeading: false,
-        isAction: true,
-        title: 'about us',
-      ),
+      appBar: CustomView.appBarCustom('Menu-Icon-01', 'Bt-Close-01', () {
+        // _scaffoldKey.currentState.openDrawer();
+        // Navigator.of(context).pop();
+      }, () {
+        Navigator.of(context).pop();
+      }, isLeading: false, isAction: true, title: 'about us', top_nav: top_nav),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

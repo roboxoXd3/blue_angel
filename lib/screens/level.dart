@@ -1,3 +1,4 @@
+import 'package:blue_angel/models/bannerResponse.dart';
 import 'package:blue_angel/models/getLevelResponse.dart';
 import 'package:blue_angel/utlis/values/styles.dart';
 import 'package:blue_angel/widgets/custom_view.dart';
@@ -6,8 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Level extends StatefulWidget {
   final GetLevelResponse getLevelResponse;
+  final BannerResponse bannerResponse;
 
-  const Level({Key key, @required this.getLevelResponse}) : super(key: key);
+  const Level({Key key, @required this.getLevelResponse, this.bannerResponse})
+      : super(key: key);
   @override
   _LevelState createState() => _LevelState();
 }
@@ -16,6 +19,8 @@ class _LevelState extends State<Level> {
   String level1;
   String level2;
   String accessToken;
+
+  int top_nav;
   getDataFromSharedPrefs() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
@@ -28,6 +33,10 @@ class _LevelState extends State<Level> {
     getDataFromSharedPrefs();
     level1 = widget.getLevelResponse.result[0].content;
     level2 = widget.getLevelResponse.result[1].content;
+
+    String s = widget.bannerResponse.data.top_nav;
+    String ss = "0xff" + s.substring(1);
+    top_nav = int.parse(ss);
     print(level1);
     print(level2);
     super.initState();
@@ -36,20 +45,12 @@ class _LevelState extends State<Level> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomView.appBarCustom(
-        'Menu-Icon-01',
-        'Bt-Close-01',
-        () {
-          // _scaffoldKey.currentState.openDrawer();
-          // Navigator.of(context).pop();
-        },
-        () {
-          Navigator.of(context).pop();
-        },
-        isLeading: false,
-        isAction: true,
-        title: 'level',
-      ),
+      appBar: CustomView.appBarCustom('Menu-Icon-01', 'Bt-Close-01', () {
+        // _scaffoldKey.currentState.openDrawer();
+        // Navigator.of(context).pop();
+      }, () {
+        Navigator.of(context).pop();
+      }, isLeading: false, isAction: true, title: 'level', top_nav: top_nav),
       body: ListView(
         children: [
           Column(

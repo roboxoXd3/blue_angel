@@ -20,12 +20,15 @@ import 'package:flutter/services.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:blue_angel/utlis/values/Global.dart';
 // import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class CustomView {
   BuildContext context;
+
   // String androidUrl, IOSUrl = '';
   static String firstName, lastName, gender, dob;
+
   static Widget appBarCustom(
     final String leadingImg,
     final String actionImg,
@@ -34,11 +37,13 @@ class CustomView {
     final bool isLeading,
     final bool isAction,
     final String title,
+    @required final int top_nav,
   }) {
     return AppBar(
       elevation: 20,
       centerTitle: true,
-      backgroundColor: kmainBg,
+      // backgroundColor: kmainBg,
+      backgroundColor: Color(top_nav),
       title: Text(
         '${title.toUpperCase()}',
         style: kheadingStyle.apply(fontSizeFactor: 1.5, fontWeightDelta: 7),
@@ -49,8 +54,9 @@ class CustomView {
                 'assets/icons/$leadingImg.png',
                 height: 20,
               ),
-              onPressed: () {
+              onPressed: () async {
                 leadingFunction();
+
                 // _scaffoldKey.currentState.openDrawer();
               })
           : Container(),
@@ -69,11 +75,12 @@ class CustomView {
     );
   }
 
-  static Widget drawerCustom(BuildContext context) {
+  static Widget drawerCustom(BuildContext context, int side_nav) {
     return Drawer(
       elevation: 5.0,
       child: Container(
-        color: kblue,
+        // color: kblue,
+        color: Color(side_nav),
         child: ListView(
           // padding: EdgeInsets.zero,
           children: <Widget>[
@@ -92,17 +99,23 @@ class CustomView {
               onTap: () async {
                 final GetLevelResponse getLevelResponse =
                     await ApiCall.getLevel();
+                final BannerResponse bannerResponse = await ApiCall.getBanner();
 
-                if (getLevelResponse.status == "success") {
+                // if (getLevelResponse.status == "success")
+                if (getLevelResponse.status == "success" &&
+                    bannerResponse.status == "success") {
                   ApiCall.token = getLevelResponse.token;
                   SharedPreferences sharedPreferences =
                       await SharedPreferences.getInstance();
                   sharedPreferences.setString(
                       "accessToken", getLevelResponse.token);
+                  sharedPreferences.setString(
+                      "top_nav", bannerResponse.data.top_nav.toString());
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => Level(
                         getLevelResponse: getLevelResponse,
+                        bannerResponse: bannerResponse,
                       ),
                     ),
                   );
@@ -111,14 +124,21 @@ class CustomView {
             ),
             Divider(),
             _createDrawerItem(
-              icon: Image.asset('assets/icons/Admin-Icon.png'),
-              text: "REQUEST WITH ADMIN",
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => RequestWithAdmin(),
-                ),
-              ),
-            ),
+                icon: Image.asset('assets/icons/Admin-Icon.png'),
+                text: "REQUEST WITH ADMIN",
+                onTap: () async {
+                  final BannerResponse bannerResponse =
+                      await ApiCall.getBanner();
+                  if (bannerResponse.status == "success") {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => RequestWithAdmin(
+                          bannerResponse: bannerResponse,
+                        ),
+                      ),
+                    );
+                  }
+                }),
             Divider(),
             _createDrawerItem(
               icon: Image.asset('assets/icons/AboutUs-Icon.png'),
@@ -127,10 +147,14 @@ class CustomView {
                 final AboutUsResponse aboutUsResponse =
                     await ApiCall.getAboutPage();
 
-                if (aboutUsResponse.status == "success") {
+                final BannerResponse bannerResponse = await ApiCall.getBanner();
+
+                if (aboutUsResponse.status == "success" &&
+                    bannerResponse.status == "success") {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => AboutUs(aboutUsResponse),
+                      builder: (context) =>
+                          AboutUs(aboutUsResponse, bannerResponse),
                       fullscreenDialog: true,
                     ),
                   );

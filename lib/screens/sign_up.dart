@@ -7,6 +7,7 @@ import 'package:blue_angel/models/signUpResponse.dart';
 import 'package:blue_angel/models/stateListResponse.dart';
 import 'package:blue_angel/models/verifyResponse.dart';
 import 'package:blue_angel/screens/common/HomeScreen.dart';
+import 'package:blue_angel/screens/login_screen.dart';
 import 'package:blue_angel/utlis/values/styles.dart';
 import 'package:blue_angel/widgets/custom_view.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -1514,10 +1515,11 @@ class _SignUpState extends State<SignUp> {
                                                   Navigator.of(context).push(
                                                     MaterialPageRoute(
                                                       builder: (context) =>
-                                                          HomeScreen(
-                                                        bannerResponse:
-                                                            bannerResponse,
-                                                      ),
+                                                          LoginScreen(),
+                                                      // HomeScreen(
+                                                      //   bannerResponse:
+                                                      //       bannerResponse,
+                                                      // ),
                                                     ),
                                                   );
                                                 }

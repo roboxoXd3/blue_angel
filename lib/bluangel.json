@@ -1,0 +1,73 @@
+{
+    "status": "success",
+    "products": [
+        {
+            "_id": "5f46814711bfc11e2ce29071",
+            "name": "AMD ryzen 5 3400g"
+        },
+        {
+            "_id": "5fac054e0507f26d9dc26da4",
+            "name": "Laptop of dell"
+        }
+    ],
+    "result": [
+        {
+            "active": 1,
+            "deleted": 0,
+            "_id": "5f9fd1498cbf677445bade12",
+            "user": "5f9fd0e08cbf677445bade11",
+            "first_name": "Rishav",
+            "last_name": "Shankar",
+            "mobile": "7033009600",
+            "survey": {
+                "active": 1,
+                "deleted": 0,
+                "_id": "5f7f51dcb315ba68fd944941",
+                "name": "Blu Form1",
+                "fields": [
+                    {
+                        "filed_name": "Occupation",
+                        "filed_type": "Text Box",
+                        "filed_value": "",
+                        "filed_required": "No"
+                    },
+                    {
+                        "filed_name": "Income",
+                        "filed_type": "Text Box",
+                        "filed_value": "",
+                        "filed_required": "No"
+                    },
+                    {
+                        "filed_name": "Education",
+                        "filed_type": "Select Box",
+                        "filed_value": "School not attended,Under 10th,10th,11th,12th,Graduation,Post Graduation",
+                        "filed_required": "No"
+                    },
+                    {
+                        "filed_name": "Habit ",
+                        "filed_type": "Select Box",
+                        "filed_value": "Cloth,Sanitary Napkin,BLU",
+                        "filed_required": "Yes"
+                    },
+                    {
+                        "filed_name": "Gender",
+                        "filed_type": "Select Box",
+                        "filed_value": "Male, Female, Declined To State",
+                        "filed_required": "Yes",
+                        "form_values_comma": [
+                            "Male",
+                            " Female",
+                            " Declined To State"
+                        ]
+                    }
+                ],
+                "created_date": "2020-10-08T17:52:28.151Z",
+                "__v": 0
+            },
+            "survey_name": "Blu Form1",
+            "created_date": "2020-11-02T09:28:41.740Z",
+            "__v": 0
+        }
+    ],
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOnsibW9iaWxlIjoiNzAzMzAwOTYwMCIsImlhdCI6MTYwODk1MjQzMiwiZXhwIjoxNjA5MTMyNDMyfSwiaWF0IjoxNjA4OTUyNDk1LCJleHAiOjE2MDg5NzA0OTV9.r3hfeZ8UfSNroF6-6hfhi0g87CuEpw4LyN1aFtLFb7o"
+}

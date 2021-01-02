@@ -26,11 +26,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isImage;
-  String bannerResponse;
+  String bannerResponseImg1;
+  String bannerResponseImg2;
   String accessToken;
   String startDate, lastDate;
+  int top_nav;
+  int side_nav;
+
   getDataFromSharedPrefs() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     setState(() {
       accessToken = sharedPreferences.getString("access_token");
     });
@@ -40,30 +45,30 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     getDataFromSharedPrefs();
     isImage = false;
-    bannerResponse = widget.bannerResponse.data.dashboardImage;
+    bannerResponseImg1 = widget.bannerResponse.data.dashboardImage;
+    bannerResponseImg2 = widget.bannerResponse.data.dashboard_image2;
+    String s = widget.bannerResponse.data.top_nav;
+    String ss = "0xff" + s.substring(1);
+    top_nav = int.parse(ss);
+    String side_navs = widget.bannerResponse.data.side_nav;
+    String side_navss = "0xff" + side_navs.substring(1);
+    side_nav = int.parse(side_navss);
     super.initState();
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
-    final PreferredSizeWidget appBar = CustomView.appBarCustom(
-      'Menu-Icon-01',
-      'Arrow-Icon-01',
-      () {
-        _scaffoldKey.currentState.openDrawer();
-        // Navigator.of(context).pop();
-      },
-      () {},
-      isLeading: true,
-      isAction: true,
-      title: 'home',
-    );
+    final PreferredSizeWidget appBar =
+        CustomView.appBarCustom('Menu-Icon-01', 'Arrow-Icon-01', () {
+      _scaffoldKey.currentState.openDrawer();
+      // Navigator.of(context).pop();
+    }, () {}, isLeading: true, isAction: true, title: 'home', top_nav: top_nav);
 
     return Scaffold(
       key: _scaffoldKey,
       appBar: appBar,
-      drawer: CustomView.drawerCustom(context),
+      drawer: CustomView.drawerCustom(context, side_nav),
       body: WillPopScope(
         onWillPop: () async => showDialog(
             context: context,
@@ -88,32 +93,44 @@ class _HomeScreenState extends State<HomeScreen> {
               children: <Widget>[
                 Row(
                   children: [
+                    // widget.bannerResponse == null || bannerResponseImg1 == null
+                    //     ? Container(
+                    //         // margin: const EdgeInsets.only(top: 10),
+                    //         child: CustomView.buildContainerWithImage(
+                    //           h: 100,
+                    //           w: 55,
+                    //           imagePath: 'assets/images/hut.png',
+                    //         ),
+                    //       )
+                    //     :
                     Container(
-                      // margin: const EdgeInsets.only(top: 10),
-                      child: CustomView.buildContainerWithImage(
-                        h: 100,
-                        w: 55,
-                        imagePath: 'assets/images/Mascot-01.png',
+                      margin: const EdgeInsets.only(top: 10, left: 10),
+                      height: 100,
+                      width: 55,
+                      child: Image.network(
+                        bannerResponseImg2,
+                        fit: BoxFit.fill,
                       ),
                     ),
-                    widget.bannerResponse == null && bannerResponse == null
-                        ? Container(
-                            margin: const EdgeInsets.only(left: 20),
-                            child: CustomView.buildContainerWithImage(
-                              h: 100,
-                              w: 100,
-                              imagePath: 'assets/images/hut.png',
-                            ),
-                          )
-                        : Container(
-                            margin: const EdgeInsets.only(left: 20),
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 10, left: 10),
-                              height: 100,
-                              width: 100,
-                              child: Image.network(bannerResponse),
-                            ),
-                          ),
+                    // widget.bannerResponse == null || bannerResponseImg2 == null
+                    //     ? Container(
+                    //         margin: const EdgeInsets.only(left: 20),
+                    //         child: CustomView.buildContainerWithImage(
+                    //           h: 100,
+                    //           w: 100,
+                    //           imagePath: 'assets/images/Mascot-01.png',
+                    //         ),
+                    //       )
+                    //     :
+                    Container(
+                      margin: const EdgeInsets.only(left: 20),
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 10, left: 10),
+                        height: 100,
+                        width: 100,
+                        child: Image.network(bannerResponseImg1),
+                      ),
+                    ),
                   ],
                 ),
                 Container(
@@ -149,7 +166,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     () async {
                                   final SurveyListResponse surveyListResponse =
                                       await ApiCall.getSurveyList();
-                                  if (surveyListResponse.status == "success") {
+                                  final BannerResponse bannerResponse =
+                                      await ApiCall.getBanner();
+                                  if (surveyListResponse.status == "success" &&
+                                      bannerResponse.status == "success") {
                                     SharedPreferences sharedPreferences =
                                         await SharedPreferences.getInstance();
                                     sharedPreferences.setString("accessToken",
@@ -157,10 +177,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     setState(() {
                                       ApiCall.token = surveyListResponse.token;
                                     });
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
                                             builder: (context) => SurveyList(
-                                                surveyListResponse)));
+                                                  bannerResponse:
+                                                      bannerResponse,
+                                                  surveyListResponse:
+                                                      surveyListResponse,
+                                                )));
                                   }
                                   // });
                                 }),
@@ -168,35 +192,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context,
                                     'Complete-Icon',
                                     'completed survey', () async {
-                                  // final SurveyListResponse surveyListResponse =
-                                  //     await ApiCall.getSurveyList();
-                                  // if (surveyListResponse.status == "success") {
-                                  //   setState(() {
-                                  //     ApiCall.token = surveyListResponse.token;
-                                  //   });
-                                  //   // Navigator.of(context).push(MaterialPageRoute(
-                                  //   //   builder: (context) => CompletedSurvey()));
-                                  //   Navigator.of(context).push(
-                                  //     MaterialPageRoute(
-                                  //       builder: (context) =>
-                                  //           AssignCompleteSurvey(
-                                  //         surveyListResponse,
-                                  //         DateTime.now()
-                                  //             .toString()
-                                  //             .split(' ')[0],
-                                  //         DateTime.now()
-                                  //             .subtract(Duration(
-                                  //               days: 90,
-                                  //             ))
-                                  //             .toString()
-                                  //             .split(' ')[0],
-                                  //       ),
-                                  //     ),
-                                  //   );
-                                  // }
                                   final SurveyListResponse surveyListResponse =
                                       await ApiCall.getSurveyList();
-                                  if (surveyListResponse.status == "success") {
+                                  final BannerResponse bannerResponse =
+                                      await ApiCall.getBanner();
+                                  if (surveyListResponse.status == "success" &&
+                                      bannerResponse.status == "success") {
                                     setState(() {
                                       ApiCall.token = surveyListResponse.token;
                                     });
@@ -204,9 +205,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             AssignReportSurvey(
+                                          bannerResponse: bannerResponse,
                                           changeReport: true,
-                                              surveyListResponse: surveyListResponse,
-                                              withoutDate: true,
+                                          surveyListResponse:
+                                              surveyListResponse,
+                                          withoutDate: true,
                                         ),
                                       ),
                                     );
@@ -224,7 +227,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     () async {
                                   final SurveyListResponse surveyListResponse =
                                       await ApiCall.getSurveyList();
-                                  if (surveyListResponse.status == "success") {
+
+                                  final BannerResponse bannerResponse =
+                                      await ApiCall.getBanner();
+                                  if (surveyListResponse.status == "success" &&
+                                      bannerResponse.status == "success") {
                                     setState(() {
                                       ApiCall.token = surveyListResponse.token;
                                     });
@@ -232,17 +239,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             AssignReportSurvey(
-                                              changeReport: true,
-                                              surveyListResponse: surveyListResponse,
-                                            ),
+                                          bannerResponse: bannerResponse,
+                                          changeReport: true,
+                                          surveyListResponse:
+                                              surveyListResponse,
+                                        ),
                                       ),
                                     );
                                   }
                                 }),
-                                CustomView.buildTapCard(context,
-                                    'EditProfile-Icon-', 'edit profile', () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => EditProfile()));
+                                CustomView.buildTapCard(
+                                    context,
+                                    'EditProfile-Icon-',
+                                    'edit profile', () async {
+                                  final BannerResponse bannerResponse =
+                                      await ApiCall.getBanner();
+                                  if (bannerResponse.status == "success") {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => EditProfile(
+                                                  bannerResponse:
+                                                      bannerResponse,
+                                                )));
+                                  }
                                 }),
                               ],
                             ),

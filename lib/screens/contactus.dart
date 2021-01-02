@@ -18,6 +18,7 @@ class ContactUs extends StatefulWidget {
 class _ContactUsState extends State<ContactUs> {
   // Map<String, dynamic> formDataShow;
   String dashboradImage, contactEmail, contactNumber;
+  int top_nav;
   String accessToken;
   getDataFromSharedPrefs() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -31,6 +32,9 @@ class _ContactUsState extends State<ContactUs> {
   void initState() {
     getDataFromSharedPrefs();
     dashboradImage = widget.bannerResponse.data.dashboardImage;
+    String ss = widget.bannerResponse.data.top_nav;
+    String s = "0xff" + ss.substring(1);
+    top_nav = int.parse(s);
     contactEmail = widget.bannerResponse.data.contactEmail;
     contactNumber = widget.bannerResponse.data.contactNumber;
     super.initState();
@@ -40,20 +44,16 @@ class _ContactUsState extends State<ContactUs> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: kmainBg,
-      appBar: CustomView.appBarCustom(
-        'Menu-Icon-01',
-        'Arrow-Icon-01',
-        () {
-          // _scaffoldKey.currentState.openDrawer();
-          // Navigator.of(context).pop();
-        },
-        () {
-          Navigator.of(context).pop();
-        },
-        isLeading: false,
-        isAction: true,
-        title: 'complete survey',
-      ),
+      appBar: CustomView.appBarCustom('Menu-Icon-01', 'Arrow-Icon-01', () {
+        // _scaffoldKey.currentState.openDrawer();
+        // Navigator.of(context).pop();
+      }, () {
+        Navigator.of(context).pop();
+      },
+          isLeading: false,
+          isAction: true,
+          title: 'complete survey',
+          top_nav: top_nav),
       body: CustomView.buildContainerBackgroundImage(
         context: context,
         child: Column(

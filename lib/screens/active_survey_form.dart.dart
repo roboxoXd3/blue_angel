@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:io' as Io;
+import 'package:blue_angel/models/bannerResponse.dart';
 import 'package:blue_angel/models/districtListResponse.dart';
 import 'package:blue_angel/models/stateListResponse.dart';
 import 'package:blue_angel/network/api_call.dart';
@@ -21,15 +22,17 @@ class ActiveSurveyForm extends StatefulWidget {
   final String surveyName;
   final String surveyId;
   final StateListResponse stateListResponse;
+  final BannerResponse bannerResponse;
 
-  const ActiveSurveyForm({
-    Key key,
-    @required this.surveyForm,
-    @required this.surveyName,
-    @required this.products,
-    @required this.surveyId,
-    @required this.stateListResponse,
-  }) : super(key: key);
+  const ActiveSurveyForm(
+      {Key key,
+      @required this.surveyForm,
+      @required this.surveyName,
+      @required this.products,
+      @required this.surveyId,
+      @required this.stateListResponse,
+      @required this.bannerResponse})
+      : super(key: key);
   @override
   _ActiveSurveyFormState createState() => _ActiveSurveyFormState();
 }
@@ -38,7 +41,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
   List _surveyForm, products;
 
   int item = 1;
-
+  int top_nav;
   final format = DateFormat("yyyy/MM/dd");
 
   final TextEditingController firstNameController = TextEditingController();
@@ -194,6 +197,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       accessToken = sharedPreferences.getString("access_token");
+      top_nav = sharedPreferences.getInt("top_nav");
     });
   }
 
@@ -227,6 +231,9 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
     }
 
     countryList = <String>['INDIA'];
+    String ss = widget.bannerResponse.data.top_nav;
+    String s = "0xff" + ss.substring(1);
+    top_nav = int.parse(s);
 
     super.initState();
   }
@@ -241,20 +248,16 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
     return IgnorePointer(
       ignoring: !isLoading,
       child: Scaffold(
-          appBar: CustomView.appBarCustom(
-            'Arrow-Icon-02',
-            'Bt-Close-01',
-            () {
-              // _scaffoldKey.currentState.openDrawer();
-              Navigator.of(context).pop();
-            },
-            () {
-              // Navigator.of(context).pop();
-            },
-            isLeading: true,
-            isAction: false,
-            title: 'active survey form',
-          ),
+          appBar: CustomView.appBarCustom('Arrow-Icon-02', 'Bt-Close-01', () {
+            // _scaffoldKey.currentState.openDrawer();
+            Navigator.of(context).pop();
+          }, () {
+            // Navigator.of(context).pop();
+          },
+              isLeading: true,
+              isAction: false,
+              title: 'active survey form',
+              top_nav: top_nav),
           body: Stack(
             children: [
               SingleChildScrollView(
@@ -825,7 +828,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                           buttonName: 'NEXT',
                           circularRadius: 30,
                           color: Colors.white,
-                          function: () {
+                          function: () async {
                             setState(() {
                               isLoading = !isLoading;
                             });
@@ -936,20 +939,25 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                               setState(() {
                                 isLoading = !isLoading;
                               });
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => DynamicSurveyForm(
-                                    surveyForm: widget.surveyForm,
-                                    surveyName: widget.surveyName,
-                                    inputDoc: inputDoc,
-                                    surveyId: widget.surveyId,
-                                    // productList: productList,
-                                    lng: lng,
-                                    lat: lat,
-                                    image: img64,
+                              final BannerResponse bannerResponse =
+                                  await ApiCall.getBanner();
+                              if (bannerResponse.status == "success") {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => DynamicSurveyForm(
+                                      bannerResponse: bannerResponse,
+                                      surveyForm: widget.surveyForm,
+                                      surveyName: widget.surveyName,
+                                      inputDoc: inputDoc,
+                                      surveyId: widget.surveyId,
+                                      // productList: productList,
+                                      lng: lng,
+                                      lat: lat,
+                                      image: img64,
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                               print(img64);
                               print(_image.path.split('/').last);
                             }

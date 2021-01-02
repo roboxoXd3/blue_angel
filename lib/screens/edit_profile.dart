@@ -16,6 +16,8 @@ import 'dart:io' as Io;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfile extends StatefulWidget {
+  final BannerResponse bannerResponse;
+  EditProfile({@required this.bannerResponse});
   @override
   _EditProfileState createState() => _EditProfileState();
 }
@@ -47,6 +49,7 @@ class _EditProfileState extends State<EditProfile> {
   // String bytes;
   String img64;
   List<int> bytes;
+  int top_nav;
 
   File _image;
   Future getImage(BuildContext context) async {
@@ -69,20 +72,16 @@ class _EditProfileState extends State<EditProfile> {
                     var image = await ImagePicker.pickImage(
                       source: ImageSource.camera,
                     );
-                    // var image = await ImagePicker()
-                    //     .getImage(source: ImageSource.camera);
+
                     setState(() {
-                      // _image = image;
                       _image = image;
                       print(_image);
                       List<int> bytes = Io.File(_image.path.split('/').last)
                           .readAsBytesSync();
                       img64 = base64UrlEncode(bytes);
-                      // var base64String =
-                      //     base64UrlEncode(_image.readAsBytesSync());
-                      // base64String = base64Encode(_image.readAsBytesSync());
+
                       print('img64 $img64');
-                      // print('base64String $base64String');
+
                       Navigator.pop(context);
                     });
                   },
@@ -146,6 +145,9 @@ class _EditProfileState extends State<EditProfile> {
     getDataFromSharedPrefs();
     genderList = <String>['Male', 'Female'];
     isUpdate = false;
+    String ss = widget.bannerResponse.data.top_nav;
+    String s = "0xff" + ss.substring(1);
+    top_nav = int.parse(s);
 
     super.initState();
   }
@@ -161,20 +163,16 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomView.appBarCustom(
-        'Arrow-Icon-02',
-        'Bt-Close-01',
-        () {
-          // _scaffoldKey.currentState.openDrawer();
-          Navigator.of(context).pop();
-        },
-        () {
-          // Navigator.of(context).pop();
-        },
-        isLeading: true,
-        isAction: false,
-        title: 'edit profile',
-      ),
+      appBar: CustomView.appBarCustom('Arrow-Icon-02', 'Bt-Close-01', () {
+        // _scaffoldKey.currentState.openDrawer();
+        Navigator.of(context).pop();
+      }, () {
+        // Navigator.of(context).pop();
+      },
+          isLeading: true,
+          isAction: false,
+          title: 'edit profile',
+          top_nav: top_nav),
       body: SingleChildScrollView(
         child: CustomView.buildContainerBackgroundImage(
           context: context,
@@ -223,10 +221,6 @@ class _EditProfileState extends State<EditProfile> {
                                             kfontColorBlue4,
                                             0, () {
                                           getImage(context);
-                                          // setState(() {
-                                          //   imgPath = _image.path.split('/').last;
-                                          //   print(imgPath);
-                                          // });
                                         })
                                       ],
                                     )),
@@ -436,17 +430,7 @@ class _EditProfileState extends State<EditProfile> {
                                     ),
                                   ),
                                 ),
-                                // Container(
-                                //   margin:
-                                //       const EdgeInsets.only(top: 20, left: 20),
-                                //   child: Text(
-                                //     CustomView.gender,
-                                //     style: kheadingStyle.apply(
-                                //       fontWeightDelta: 3,
-                                //       fontSizeFactor: 1.2,
-                                //     ),
-                                //   ),
-                                // ),
+
                                 Container(
                                   margin:
                                       const EdgeInsets.only(top: 20, left: 20),

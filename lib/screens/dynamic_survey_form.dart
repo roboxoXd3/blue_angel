@@ -19,6 +19,7 @@ class DynamicSurveyForm extends StatefulWidget {
   final String surveyName;
   final Map<String, Object> inputDoc;
   final String surveyId;
+  final BannerResponse bannerResponse;
   // final List<String> productList;
   final String lng;
   final String lat;
@@ -30,6 +31,7 @@ class DynamicSurveyForm extends StatefulWidget {
     @required this.surveyName,
     @required this.inputDoc,
     @required this.surveyId,
+    @required this.bannerResponse,
     // @required this.productList,
     @required this.lng,
     @required this.lat,
@@ -41,6 +43,7 @@ class DynamicSurveyForm extends StatefulWidget {
 
 class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
   List<String> selectedItemValue = List<String>();
+  int top_nav;
   // List _selecteCheckbox = List();
   List _surveyForm;
   String valueSelected;
@@ -92,19 +95,25 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
     });
   }
 
+  List<String> newValues;
   bool isLoading = true;
   @override
   void initState() {
     getDataFromSharedPrefs();
     boolValue = false;
+    newValues = new List<String>();
     _surveyForm = widget.surveyForm;
     print(_surveyForm.length);
     for (int i = 0; i < _surveyForm.length; i++) {
       print(_surveyForm[i].filedValue);
+      newValues.add("");
       print(_surveyForm);
     }
 
     countryList = <String>['INDIA'];
+    String ss = widget.bannerResponse.data.top_nav;
+    String s = "0xff" + ss.substring(1);
+    top_nav = int.parse(s);
 
     super.initState();
   }
@@ -115,20 +124,16 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
     return IgnorePointer(
       ignoring: !isLoading,
       child: Scaffold(
-          appBar: CustomView.appBarCustom(
-            'Arrow-Icon-02',
-            'Bt-Close-01',
-            () {
-              // _scaffoldKey.currentState.openDrawer();
-              Navigator.of(context).pop();
-            },
-            () {
-              // Navigator.of(context).pop();
-            },
-            isLeading: true,
-            isAction: false,
-            title: widget.surveyName,
-          ),
+          appBar: CustomView.appBarCustom('Arrow-Icon-02', 'Bt-Close-01', () {
+            // _scaffoldKey.currentState.openDrawer();
+            Navigator.of(context).pop();
+          }, () {
+            // Navigator.of(context).pop();
+          },
+              isLeading: true,
+              isAction: false,
+              title: widget.surveyName,
+              top_nav: top_nav),
           body: Stack(
             children: [
               SingleChildScrollView(
@@ -168,19 +173,21 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                               itemCount: _surveyForm.length,
                               itemBuilder: (context, index) {
                                 // ignore: missing_return
+
                                 print('in builder');
                                 String name = _surveyForm[index].filedName;
+
                                 print('in filedName');
                                 List<String> comma =
                                     _surveyForm[index].filedValue.split(",");
+                                if (newValues[index].isEmpty)
+                                  newValues[index] = comma[0];
                                 String type = _surveyForm[index].filedType;
                                 print('in filedType');
                                 var require = _surveyForm[index].filedRequired;
                                 print('in filedRequired');
                                 String fv = _surveyForm[index].filedValue;
                                 print('in filedValue');
-                                // List<String> comma =
-                                //     _surveyForm[index].formValuesComma;
                                 print('in formValuesComma');
                                 print(
                                     'comma len => ' + comma.length.toString());
@@ -193,131 +200,138 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                                   }
                                   // lengthFind(comma.length);
                                   // ignore: missing_return
-                                  return Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      require.toString().toLowerCase() == "no"
-                                          ? Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name(Optional) :',
-                                                style: kheadingStyle.apply(
-                                                  fontSizeFactor: 1.2,
-                                                  fontWeightDelta: 5,
+                                  return StatefulBuilder(
+                                    builder: (con, updateState) {
+                                      return Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          require.toString().toLowerCase() ==
+                                                  "no"
+                                              ? Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20, left: 20),
+                                                  child: Text(
+                                                    '$name(Optional) :',
+                                                    style: kheadingStyle.apply(
+                                                      fontSizeFactor: 1.2,
+                                                      fontWeightDelta: 5,
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20, left: 20),
+                                                  child: Text(
+                                                    '$name :',
+                                                    style: kheadingStyle.apply(
+                                                      fontSizeFactor: 1.2,
+                                                      fontWeightDelta: 5,
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                          : Container(
+                                          for (int i = 0; i < comma.length; i++)
+                                            // inputs.add(true),
+                                            // ignore: missing_return
+                                            Container(
                                               margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name :',
-                                                style: kheadingStyle.apply(
-                                                  fontSizeFactor: 1.2,
-                                                  fontWeightDelta: 5,
-                                                ),
+                                                top: 8,
                                               ),
-                                            ),
-                                      for (int i = 0; i < comma.length; i++)
-                                        // inputs.add(true),
-                                        // ignore: missing_return
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                            top: 8,
-                                          ),
-                                          child: CustomView.checkbox(
-                                            comma[i],
-                                            checkList[i],
-                                            // values[i.toString()],
-                                            (value) {
-                                              setState(() {
-                                                // values[i.toString()] = value;
-                                                // listMap.add(values);
-                                                // print(listMap);
-                                                checkList[i] = value;
-                                                print(checkList[i]);
-                                                createDoc["$name"] =
-                                                    checkList[i];
-                                                print(createDoc);
-                                              });
-                                            },
-                                          ),
-                                        )
-                                    ],
-                                  );
-                                  // ignore: missing_return
-                                } else if (type.toLowerCase() == "radio box") {
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      require.toString().toLowerCase() == "no"
-                                          ? Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name(Optional) :',
-                                                style: kheadingStyle.apply(
-                                                  fontSizeFactor: 1.2,
-                                                  fontWeightDelta: 5,
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name :',
-                                                style: kheadingStyle.apply(
-                                                  fontSizeFactor: 1.2,
-                                                  fontWeightDelta: 5,
-                                                ),
-                                              ),
-                                            ),
-                                      for (int i = 0; i < comma.length; i++)
-                                        Container(
-                                          margin:
-                                              // ignore: missing_return
-                                              const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Radio(
-                                                activeColor: Colors.green,
-                                                toggleable: false,
-                                                onChanged: (int fn) {
-                                                  setState(() {
-                                                    _value2 = fn;
-                                                    // createDoc[name] =
-                                                    //     comma[i].toString();
-                                                    // listMap
-                                                    //     .add(comma[i].toString());
-                                                    // print(listMap);
+                                              child: CustomView.checkbox(
+                                                comma[i],
+                                                checkList[i],
+                                                // values[i.toString()],
+                                                (value) {
+                                                  updateState(() {
+                                                    checkList[i] = value;
+                                                    print(checkList[i]);
                                                     createDoc["$name"] =
-                                                        comma[i];
+                                                        checkList[i];
                                                     print(createDoc);
                                                   });
                                                 },
-                                                groupValue: _value2,
-                                                value: i,
                                               ),
-                                              Text(
-                                                comma[i],
-                                                style: kheadingStyle.apply(
-                                                  fontSizeFactor: 1.2,
-                                                  fontWeightDelta: 5,
+                                            )
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  // ignore: missing_return
+                                } else if (type.toLowerCase() == "radio box") {
+                                  return StatefulBuilder(
+                                      builder: (con, updateState) {
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        require.toString().toLowerCase() == "no"
+                                            ? Container(
+                                                margin: const EdgeInsets.only(
+                                                    top: 20, left: 20),
+                                                child: Text(
+                                                  '$name(Optional) :',
+                                                  style: kheadingStyle.apply(
+                                                    fontSizeFactor: 1.2,
+                                                    fontWeightDelta: 5,
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(
+                                                margin: const EdgeInsets.only(
+                                                    top: 20, left: 20),
+                                                child: Text(
+                                                  '$name :',
+                                                  style: kheadingStyle.apply(
+                                                    fontSizeFactor: 1.2,
+                                                    fontWeightDelta: 5,
+                                                  ),
                                                 ),
                                               ),
-                                              // Text(comma[i]),
-                                            ],
+                                        for (int i = 0; i < comma.length; i++)
+                                          Container(
+                                            margin:
+                                                // ignore: missing_return
+                                                const EdgeInsets.only(
+                                                    top: 20, left: 20),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Radio(
+                                                  activeColor: Colors.green,
+                                                  toggleable: false,
+                                                  onChanged: (int fn) {
+                                                    updateState(() {
+                                                      _value2 = fn;
+                                                      // createDoc[name] =
+                                                      //     comma[i].toString();
+                                                      // listMap
+                                                      //     .add(comma[i].toString());
+                                                      // print(listMap);
+                                                      createDoc["$name"] =
+                                                          comma[i];
+                                                      print(createDoc);
+                                                    });
+                                                  },
+                                                  groupValue: _value2,
+                                                  value: i,
+                                                ),
+                                                Text(
+                                                  comma[i],
+                                                  style: kheadingStyle.apply(
+                                                    fontSizeFactor: 1.2,
+                                                    fontWeightDelta: 5,
+                                                  ),
+                                                ),
+                                                // Text(comma[i]),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                    ],
-                                  );
+                                      ],
+                                    );
+                                  });
                                   // }
                                   // ignore: missing_return
                                 } else if (type.toLowerCase() == "select box") {
@@ -325,181 +339,105 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                                     // ignore: missing_return
                                     selectedItemValue.add(comma[i]);
                                   }
-
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          child: Text(
-                                            _surveyForm[index].filedName,
-                                            // style: GoogleFonts.actor(
-                                            //   fontSize: 25,
-                                            //   color: Colors.blue,
-                                            // ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                              top: 20, bottom: 20),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.90,
-                                          // decoration:
-                                          //     kSurveyFormContainerDecoration,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: DropdownButton<String>(
-                                              hint: Text(
-                                                _surveyForm[index].filedName,
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.blue),
+                                  print('comma list => ' + comma.toString());
+                                  return StatefulBuilder(
+                                      builder: (con, updateState) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                              _surveyForm[index].filedName,
+                                              style: kheadingStyle.apply(
+                                                fontSizeFactor: 1.2,
+                                                fontWeightDelta: 5,
                                               ),
-                                              items: comma.map((dynamic val) {
-                                                return DropdownMenuItem(
-                                                    value: val.toString(),
-                                                    child:
-                                                        Text(val.toString()));
-                                              }).toList(),
-                                              value: createDoc.containsKey(name)
-                                                  ? createDoc[name].toString()
-                                                  : name,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  createDoc[name] =
-                                                      value.toString();
-                                                  print(createDoc);
-                                                });
-                                              },
-                                              // value: ,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-
-                                  // for (int i = 0; i < comma.length; i++)
-                                  // return Column(
-                                  //   crossAxisAlignment:
-                                  //       CrossAxisAlignment.start,
-                                  //   mainAxisAlignment: MainAxisAlignment.start,
-                                  //   children: [
-                                  //     require.toString().toLowerCase() == "no"
-                                  //         ? Container(
-                                  //             margin: const EdgeInsets.only(
-                                  //                 top: 20, left: 20),
-                                  //             child: Text(
-                                  //               '$name(Optional) :',
-                                  //               style: kheadingStyle.apply(
-                                  //                 fontSizeFactor: 1.2,
-                                  //                 fontWeightDelta: 5,
-                                  //               ),
-                                  //             ),
-                                  //           )
-                                  //         : Container(
-                                  //             margin: const EdgeInsets.only(
-                                  //                 top: 20, left: 20),
-                                  //             child: Text(
-                                  //               '$name :',
-                                  //               style: kheadingStyle.apply(
-                                  //                 fontSizeFactor: 1.2,
-                                  //                 fontWeightDelta: 5,
-                                  //               ),
-                                  //             ),
-                                  //           ),
-                                  //     // for (int i = 0; i < comma.length - 1; i++)
-                                  //     // ignore: missing_return
-                                  //     Container(
-                                  //       margin: const EdgeInsets.only(
-                                  //           top: 20, left: 20),
-                                  //       child: CustomView.buildDropDown(
-                                  //         context: context,
-                                  //         key: ValueKey('${name}'),
-                                  //         // inputValue: selectedItemValue[i] == null
-                                  //         //     ? ''
-                                  //         //     : selectedItemValue[i].toString(),
-                                  //         inputValue: newValue,
-                                  //         list: comma,
-                                  //         fn: (value) {
-                                  //           setState(() {
-                                  //             newValue = value;
-                                  //             // selectedItemValue[index] = value;
-                                  //             createDoc[name] =
-                                  //                 newValue.toString();
-                                  //             print(createDoc);
-                                  //             // listMap.add(
-                                  //             //     selectedItemValue[index]
-                                  //             //         .toString());
-                                  //             // print(listMap);
-                                  //           });
-                                  //         },
-                                  //         text: 'Select Value',
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // );
-                                  // }
-                                  // ignore: missing_return
+                                          CustomView.buildDropDown(
+                                            context: context,
+                                            key: ValueKey('${newValue}'),
+                                            inputValue: newValue,
+                                            list: comma,
+                                            fn: (value) {
+                                              updateState(() {
+                                                newValues[index] = value;
+                                                createDoc[name] =
+                                                    newValues[index].toString();
+                                                print(createDoc[name]);
+                                              });
+                                            },
+                                            text: newValues[index],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
                                 } else if (type.toLowerCase() == "text box") {
                                   // createDoc[name] = fv.toString();
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      require.toString().toLowerCase() == "no"
-                                          ? Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name(Optional) :',
-                                                style: kheadingStyle.apply(
-                                                  fontSizeFactor: 1.2,
-                                                  fontWeightDelta: 5,
+                                  return StatefulBuilder(
+                                    builder: (c, updateState) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          require.toString().toLowerCase() ==
+                                                  "no"
+                                              ? Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20, left: 20),
+                                                  child: Text(
+                                                    '$name(Optional) :',
+                                                    style: kheadingStyle.apply(
+                                                      fontSizeFactor: 1.2,
+                                                      fontWeightDelta: 5,
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20, left: 20),
+                                                  child: Text(
+                                                    '$name :',
+                                                    style: kheadingStyle.apply(
+                                                      fontWeightDelta: 3,
+                                                      fontSizeFactor: 1.2,
+                                                    ),
+                                                    softWrap: true,
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                          : Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name :',
-                                                style: kheadingStyle.apply(
-                                                  fontWeightDelta: 3,
-                                                  fontSizeFactor: 1.2,
-                                                ),
-                                                softWrap: true,
-                                              ),
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              top: 20,
+                                              left: 20,
                                             ),
-                                      Container(
-                                        margin: const EdgeInsets.only(
-                                          top: 20,
-                                          left: 20,
-                                        ),
-                                        child: CustomView.editTextField(
-                                            color: Color(0xff004fc10),
-                                            keyborad: TextInputType.text,
-                                            // labelText: 'LAST NAME',
-                                            lengthLimiting: 20,
-                                            // height: 50,
-                                            fn: (input) {
-                                              setState(() {
-                                                textBox = input.toString();
-                                                // createDoc["name1"] = name;
-                                                createDoc["$name"] = textBox;
-                                                print(createDoc);
-                                                // listMap.add(textBox);
-                                                // print(listMap);
-                                              });
-                                            }),
-                                      ),
-                                    ],
+                                            child: CustomView.editTextField(
+                                                color: Color(0xff004fc10),
+                                                keyborad: TextInputType.text,
+                                                // labelText: 'LAST NAME',
+                                                lengthLimiting: 20,
+                                                // height: 50,
+                                                fn: (input) {
+                                                  updateState(() {
+                                                    textBox = input.toString();
+                                                    // createDoc["name1"] = name;
+                                                    createDoc["$name"] =
+                                                        textBox;
+                                                    print(createDoc);
+                                                    // listMap.add(textBox);
+                                                    // print(listMap);
+                                                  });
+                                                }),
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
                                   // }
                                 } else if (type.toLowerCase() == "text area" &&
@@ -508,58 +446,65 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                                   // if (require.toString().toLowerCase() == "yes"
                                   //     ? isNotNull
                                   //     : !isNotNull)
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      require.toString().toLowerCase() == "no"
-                                          ? Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name (Optional)',
-                                                style: kheadingStyle.apply(
-                                                  fontWeightDelta: 3,
-                                                  fontSizeFactor: 1.2,
+                                  return StatefulBuilder(
+                                    builder: (c, updateState) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          require.toString().toLowerCase() ==
+                                                  "no"
+                                              ? Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20, left: 20),
+                                                  child: Text(
+                                                    '$name (Optional)',
+                                                    style: kheadingStyle.apply(
+                                                      fontWeightDelta: 3,
+                                                      fontSizeFactor: 1.2,
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 20, left: 20),
+                                                  child: Text(
+                                                    '$name :',
+                                                    style: kheadingStyle.apply(
+                                                      fontWeightDelta: 3,
+                                                      fontSizeFactor: 1.2,
+                                                    ),
+                                                    softWrap: true,
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                          : Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name :',
-                                                style: kheadingStyle.apply(
-                                                  fontWeightDelta: 3,
-                                                  fontSizeFactor: 1.2,
-                                                ),
-                                                softWrap: true,
-                                              ),
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              top: 20,
+                                              left: 20,
                                             ),
-                                      Container(
-                                        margin: const EdgeInsets.only(
-                                          top: 20,
-                                          left: 20,
-                                        ),
-                                        child: CustomView.editTextField(
-                                            color: Color(0xff004fc10),
-                                            keyborad: TextInputType.text,
-                                            // labelText: 'LAST NAME',
-                                            lengthLimiting: 20,
-                                            // height: 50,
-                                            fn: (input) {
-                                              setState(() {
-                                                textArea = input.toString();
-                                                // createDoc["name"] = name;
-                                                createDoc["$name"] = textArea;
-                                                // listMap.add(textArea);
-                                                // print(listMap);
-                                                print(createDoc);
-                                              });
-                                            }),
-                                      ),
-                                    ],
+                                            child: CustomView.editTextField(
+                                                color: Color(0xff004fc10),
+                                                keyborad: TextInputType.text,
+                                                // labelText: 'LAST NAME',
+                                                lengthLimiting: 20,
+                                                // height: 50,
+                                                fn: (input) {
+                                                  updateState(() {
+                                                    textArea = input.toString();
+                                                    // createDoc["name"] = name;
+                                                    createDoc["$name"] =
+                                                        textArea;
+                                                    // listMap.add(textArea);
+                                                    // print(listMap);
+                                                    print(createDoc);
+                                                  });
+                                                }),
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
                                 }
                               },
@@ -615,7 +560,10 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
 
                               final SurveyListResponse surveyListResponse =
                                   await ApiCall.getSurveyList();
-                              if (surveyListResponse.status == "success") {
+                              final BannerResponse bannerResponse =
+                                  await ApiCall.getBanner();
+                              if (surveyListResponse.status == "success" &&
+                                  bannerResponse.status == "success") {
                                 setState(() {
                                   ApiCall.token = surveyListResponse.token;
                                 });
@@ -627,8 +575,11 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                                   });
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            SurveyList(surveyListResponse)),
+                                        builder: (context) => SurveyList(
+                                              bannerResponse: bannerResponse,
+                                              surveyListResponse:
+                                                  surveyListResponse,
+                                            )),
                                   );
                                 });
                               }

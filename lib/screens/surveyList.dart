@@ -13,13 +13,15 @@ import 'active_survey_form.dart.dart';
 
 class SurveyList extends StatefulWidget {
   final SurveyListResponse surveyListResponse;
-  SurveyList(this.surveyListResponse);
+  final BannerResponse bannerResponse;
+  SurveyList({this.surveyListResponse, this.bannerResponse});
   @override
   _SurveyListState createState() => _SurveyListState();
 }
 
 class _SurveyListState extends State<SurveyList> {
   int _count;
+  int top_nav;
   String status;
   List list;
   List fieldName = new List();
@@ -38,6 +40,9 @@ class _SurveyListState extends State<SurveyList> {
     _count = widget.surveyListResponse.result.length;
     print('response ${widget.surveyListResponse.status}');
     getDataFromSharedPrefs();
+    String ss = widget.bannerResponse.data.top_nav;
+    String s = "0xff" + ss.substring(1);
+    top_nav = int.parse(s);
     super.initState();
   }
 
@@ -45,29 +50,25 @@ class _SurveyListState extends State<SurveyList> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: kmainBg,
-      appBar: CustomView.appBarCustom(
-        'Arrow-Icon-02',
-        'Bt-Close-01',
-        () async {
-          // _scaffoldKey.currentState.openDrawer();
-          final BannerResponse bannerResponse = await ApiCall.getBanner();
-          if (bannerResponse.status == "success") {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(
-                  bannerResponse: bannerResponse,
-                ),
+      appBar: CustomView.appBarCustom('Arrow-Icon-02', 'Bt-Close-01', () async {
+        // _scaffoldKey.currentState.openDrawer();
+        final BannerResponse bannerResponse = await ApiCall.getBanner();
+        if (bannerResponse.status == "success") {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                bannerResponse: bannerResponse,
               ),
-            );
-          }
-        },
-        () {
-          // Navigator.of(context).pop();
-        },
-        isLeading: true,
-        isAction: false,
-        title: 'active survey list',
-      ),
+            ),
+          );
+        }
+      }, () {
+        // Navigator.of(context).pop();
+      },
+          isLeading: true,
+          isAction: false,
+          title: 'active survey list',
+          top_nav: top_nav),
       body: CustomView.buildContainerBackgroundImage(
         context: context,
         child: Container(
@@ -80,6 +81,8 @@ class _SurveyListState extends State<SurveyList> {
                 onTap: () async {
                   // print(widget.surveyListResponse.result[index].survey
                   //     .fields[index].filedName);
+                  final BannerResponse bannerResponse =
+                      await ApiCall.getBanner();
                   List lst =
                       widget.surveyListResponse.result[index].survey.fields;
                   print(lst);
@@ -89,9 +92,11 @@ class _SurveyListState extends State<SurveyList> {
                   }
                   final StateListResponse stateListResponse =
                       await ApiCall.postState();
-                  if (stateListResponse.status == "success") {
+                  if (stateListResponse.status == "success" &&
+                      bannerResponse.status == "success") {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ActiveSurveyForm(
+                        bannerResponse: bannerResponse,
                         products: widget.surveyListResponse.products,
                         surveyForm: lst,
                         surveyName:
