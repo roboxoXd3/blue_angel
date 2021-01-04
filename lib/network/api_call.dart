@@ -274,6 +274,7 @@ class ApiCall {
 
   // sign up api
   static Future<SignUpResponse> postSignUp({
+    // @required int userType,
     @required String firstName,
     @required String lastName,
     @required String gender,
@@ -303,6 +304,7 @@ class ApiCall {
         // "authorization": "$token",
       },
       body: json.encode({
+        // 'user_type': userType,
         'first_name': firstName,
         'last_name': lastName,
         'gender': gender,
@@ -320,6 +322,7 @@ class ApiCall {
         'identity': identity,
         'mobile': mobile,
         "document": document,
+        // "user_type": "user_type",
         // 'document': CustomView.base64String(image.readAsBytesSync()),
         // 'document': image.path,
       }),
@@ -402,6 +405,7 @@ class ApiCall {
     );
     if (response.statusCode == 200) {
       final String responseString = response.body;
+      print("Response string value is: " + responseString);
       return stateListResponseFromJson(responseString);
     } else {
       return null;

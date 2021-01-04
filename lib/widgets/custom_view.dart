@@ -1,5 +1,6 @@
 import 'dart:convert';
 // import 'dart:ffi';
+
 import 'package:share/share.dart';
 import 'dart:typed_data';
 import 'dart:io' show Platform;
@@ -72,6 +73,7 @@ class CustomView {
                 })
             : Container(),
       ],
+      // bottom: Marquee(text: 'hello blueangels angel,),
     );
   }
 
@@ -306,7 +308,8 @@ class CustomView {
       int lengthLimiting,
       Function fn,
       Function validator,
-      ValueKey key}) {
+      ValueKey key,
+      String prefilledText}) {
     return Container(
       // color: Colors.blue[50],
       // alignment: Alignment.bottomCenter,
@@ -316,6 +319,7 @@ class CustomView {
         vertical: 4,
       ),
       child: TextFormField(
+        initialValue: prefilledText,
         key: key,
         expands: false,
         validator: validator,
@@ -684,13 +688,6 @@ class CustomView {
         title: Text(
           title,
           textAlign: TextAlign.center,
-          // style: color == null
-          //     ? null
-          //     : kheadingStyle.apply(
-          //         color: color,
-          //         fontWeightDelta: 5,
-          //         fontSizeFactor: 1.2,
-          //       ),
         ),
         content: Text(
           value,

@@ -42,6 +42,8 @@ dependencies:
   share: ^0.6.5
   double_back_to_close_app: ^1.2.0
   shared_preferences: ^0.5.12
+  marquee: ^1.6.1
+  google_fonts: ^1.1.1
 
 dev_dependencies:
   flutter_test:

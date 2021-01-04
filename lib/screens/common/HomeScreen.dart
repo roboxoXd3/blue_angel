@@ -11,6 +11,7 @@ import 'package:blue_angel/widgets/custom_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../completed_survey.dart';
@@ -32,6 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String startDate, lastDate;
   int top_nav;
   int side_nav;
+  int s_font_color;
+  int s_background_color;
+  String sliderText;
 
   getDataFromSharedPrefs() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -41,18 +45,35 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  @override
-  void initState() {
-    getDataFromSharedPrefs();
-    isImage = false;
-    bannerResponseImg1 = widget.bannerResponse.data.dashboardImage;
-    bannerResponseImg2 = widget.bannerResponse.data.dashboard_image2;
+  getDataFromSettings() {
     String s = widget.bannerResponse.data.top_nav;
     String ss = "0xff" + s.substring(1);
     top_nav = int.parse(ss);
+
     String side_navs = widget.bannerResponse.data.side_nav;
     String side_navss = "0xff" + side_navs.substring(1);
     side_nav = int.parse(side_navss);
+
+    bannerResponseImg1 = widget.bannerResponse.data.dashboardImage;
+    bannerResponseImg2 = widget.bannerResponse.data.dashboard_image2;
+
+    String fc = widget.bannerResponse.data.slider_font_color;
+    String fcs = "0xff" + fc.substring(1);
+    s_font_color = int.parse(fcs);
+
+    String bg = widget.bannerResponse.data.slider_background_color;
+    String bgs = "0xff" + bg.substring(1);
+    s_background_color = int.parse(bgs);
+
+    sliderText = widget.bannerResponse.data.slider_text;
+  }
+
+  @override
+  void initState() {
+    getDataFromSharedPrefs();
+    getDataFromSettings();
+    isImage = false;
+
     super.initState();
   }
 
@@ -91,18 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
+                Expanded(
+                  // child: Container(
+                  //   height: 10,
+                  //   color: Color(s_background_color),
+                  child: Marquee(
+                    blankSpace: 600,
+                    text: sliderText,
+                    style: TextStyle(color: Color(s_font_color), fontSize: 10),
+                  ),
+                  // ),
+                ),
                 Row(
                   children: [
-                    // widget.bannerResponse == null || bannerResponseImg1 == null
-                    //     ? Container(
-                    //         // margin: const EdgeInsets.only(top: 10),
-                    //         child: CustomView.buildContainerWithImage(
-                    //           h: 100,
-                    //           w: 55,
-                    //           imagePath: 'assets/images/hut.png',
-                    //         ),
-                    //       )
-                    //     :
                     Container(
                       margin: const EdgeInsets.only(top: 10, left: 10),
                       height: 100,
@@ -112,16 +134,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         fit: BoxFit.fill,
                       ),
                     ),
-                    // widget.bannerResponse == null || bannerResponseImg2 == null
-                    //     ? Container(
-                    //         margin: const EdgeInsets.only(left: 20),
-                    //         child: CustomView.buildContainerWithImage(
-                    //           h: 100,
-                    //           w: 100,
-                    //           imagePath: 'assets/images/Mascot-01.png',
-                    //         ),
-                    //       )
-                    //     :
                     Container(
                       margin: const EdgeInsets.only(left: 20),
                       child: Container(

@@ -5,6 +5,7 @@ import 'package:blue_angel/models/loginResponse.dart';
 import 'package:blue_angel/models/stateListResponse.dart';
 import 'package:blue_angel/models/verifyResponse.dart';
 import 'package:blue_angel/network/api_call.dart';
+import 'package:blue_angel/screens/Registration.dart';
 import 'package:blue_angel/utlis/values/styles.dart';
 import 'package:blue_angel/widgets/custom_view.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,37 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  String activationMessage = '';
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Wait"),
+          content: new Text(activationMessage),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Ok"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // setState(() {
+                //   isLoading = !isLoading;
+                // });
+                // Dialog.
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return LoginScreen();
+                // }));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // BannerResponse bannerResponse;
   String mobilenumber, status, otp, tokenCall;
   String response;
@@ -192,16 +224,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 mobileNumber: mobilenumber,
                                               );
 
-                                              if (mobilenumber == null) {
+                                              print(loginResponse.message);
+
+                                              setState(() {
+                                                activationMessage =
+                                                    loginResponse.message;
+                                              });
+                                              _showDialog();
+                                              setState(() {
+                                                isLoading = !isLoading;
+                                              });
+                                              // Navigator.of(context).pop();
+
+                                              if (mobilenumber.length == 0) {
                                                 CustomView.showInDialog(
                                                     context,
                                                     "Error",
                                                     "Mobile Number is Empty!",
                                                     () {
                                                   Navigator.of(context).pop();
-                                                  setState(() {
-                                                    isLoading = !isLoading;
-                                                  });
+                                                  // setState(() {
+                                                  //   isLoading = !isLoading;
+                                                  // });
                                                 });
                                               } else if (mobilenumber.length <
                                                   10) {
@@ -211,43 +255,52 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     "Mobile Number is atleast 10 digits",
                                                     () {
                                                   Navigator.of(context).pop();
-                                                  setState(() {
-                                                    isLoading = !isLoading;
-                                                  });
+                                                  // setState(() {
+                                                  //   isLoading = !isLoading;
+                                                  // });
                                                 });
-                                              } else if (loginResponse.status ==
-                                                      "error" &&
-                                                  loginResponse.message ==
-                                                      "Invalid mobile/passwordd") {
-                                                CustomView.showInDialog(
-                                                    context,
-                                                    "Error",
-                                                    "Invalid Mobile Number",
-                                                    () {
-                                                  Navigator.of(context).pop();
-                                                  setState(() {
-                                                    isLoading = !isLoading;
-                                                  });
-                                                });
-                                              } else if (loginResponse.status ==
-                                                      "error" &&
-                                                  loginResponse.message ==
-                                                      "Account is inactive") {
-                                                CustomView.showInDialog(
-                                                    context,
-                                                    "Error",
-                                                    "Account is inactive", () {
-                                                  Navigator.of(context).pop();
-                                                  setState(() {
-                                                    isLoading = !isLoading;
-                                                  });
-                                                });
-                                              } else {
+                                              }
+                                              // else if (loginResponse.status ==
+                                              //         "error" &&
+                                              //     loginResponse.message ==
+                                              //         "Invalid mobile/passwordd") {
+                                              //   _showDialog();
+                                              //   setState(() {
+                                              //     isLoading = !isLoading;
+                                              //   });
+                                              //   // CustomView.showInDialog(
+                                              //   //     context,
+                                              //   //     "Error",
+                                              //   //     loginResponse.message, () {
+                                              //   //   Navigator.of(context).pop();
+                                              //   //   setState(() {
+                                              //   //     isLoading = !isLoading;
+                                              //   //   });
+                                              //   // });
+                                              // } else if (loginResponse.status ==
+                                              //         "error" &&
+                                              //     loginResponse.message ==
+                                              //         "Account is inactive") {
+                                              //   _showDialog();
+                                              //   setState(() {
+                                              //     isLoading = !isLoading;
+                                              //   });
+                                              //   // CustomView.showInDialog(
+                                              //   //     context,
+                                              //   //     "Error",
+                                              //   //     loginResponse.message, () {
+                                              //   //   Navigator.of(context).pop();
+                                              //   //   setState(() {
+                                              //   //     isLoading = !isLoading;
+                                              //   //   });
+                                              //   // });
+                                              // }
+                                              else {
                                                 if (loginResponse.status ==
                                                     "success") {
                                                   // isLoading = !isLoading;
                                                   setState(() {
-                                                    isLoading = !isLoading;
+                                                    // isLoading = !isLoading;
                                                     nameChange = !nameChange;
                                                     response =
                                                         loginResponse.status;
@@ -381,12 +434,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                                               "accessToken",
                                                               verifyResponse
                                                                   .token);
-                                                      sharedPreferences
-                                                          .setString(
-                                                              "tokenCall",
-                                                              verifyResponse
-                                                                  .result.id
-                                                                  .toString());
+                                                      // sharedPreferences
+                                                      //     .setString(
+                                                      //         "tokenCall",
+                                                      //         verifyResponse
+                                                      //             .result.id
+                                                      //             .toString());
 
                                                       sharedPreferences
                                                           .setString(
@@ -440,6 +493,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         print(verifyResponse
                                                             .result.id
                                                             .toString());
+
                                                         CustomView.firstName =
                                                             verifyResponse
                                                                 .result
@@ -526,11 +580,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                     builder: (context) =>
-                                                        SignUp(
-                                                      // listData: ApiCall.listData,
-                                                      stateListResponse:
-                                                          stateListResponse,
-                                                    ),
+                                                        Registration(),
+                                                    //     SignUp(
+                                                    //   // listData: ApiCall.listData,
+                                                    //   stateListResponse:
+                                                    //       stateListResponse,
+                                                    // ),
                                                   ),
                                                 );
                                               }

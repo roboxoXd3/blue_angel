@@ -30,3 +30,7 @@ const kheadingStyle = const TextStyle(
 //     List: ksubBg,
 //   ),
 // );
+var kSurveyFormContainerDecoration = BoxDecoration(
+  borderRadius: BorderRadius.circular(10),
+  color: Color(0xffbdd5f1),
+);

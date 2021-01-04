@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:blue_angel/models/bannerResponse.dart';
 import 'package:blue_angel/models/updateProfileResponse.dart';
+import 'package:blue_angel/models/verifyResponse.dart';
 import 'package:blue_angel/network/api_call.dart';
 import 'package:blue_angel/screens/common/HomeScreen.dart';
 import 'package:blue_angel/utlis/values/styles.dart';
@@ -50,6 +51,8 @@ class _EditProfileState extends State<EditProfile> {
   String img64;
   List<int> bytes;
   int top_nav;
+
+  VerifyResponse verifyResponse;
 
   File _image;
   Future getImage(BuildContext context) async {
@@ -143,11 +146,18 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     getDataFromSharedPrefs();
+    // print("First name: " + firstName);
+
     genderList = <String>['Male', 'Female'];
     isUpdate = false;
     String ss = widget.bannerResponse.data.top_nav;
     String s = "0xff" + ss.substring(1);
     top_nav = int.parse(s);
+    firstName = CustomView.firstName;
+    lastName = CustomView.lastName;
+    dob = CustomView.dob;
+    gender = CustomView.gender;
+    //  gender CustomView.
 
     super.initState();
   }
@@ -157,6 +167,7 @@ class _EditProfileState extends State<EditProfile> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       accessToken = sharedPreferences.getString("access_token");
+      // firstName = sharedPreferences.getString("firstName");
     });
   }
 
@@ -238,6 +249,8 @@ class _EditProfileState extends State<EditProfile> {
                                 Container(
                                   margin: const EdgeInsets.only(top: 20),
                                   child: CustomView.editTextField(
+                                      // prefilledText: "First name",
+                                      labelText: firstName,
                                       controller: firstNameController,
                                       fn: (input) {
                                         setState(() {
@@ -264,6 +277,9 @@ class _EditProfileState extends State<EditProfile> {
                                 Container(
                                   margin: const EdgeInsets.only(top: 20),
                                   child: CustomView.editTextField(
+                                      labelText: lastName,
+                                      // prefilledText:
+                                      //     CustomView.lastName.toUpperCase(),
                                       controller: lasttNameController,
                                       fn: (input) {
                                         setState(() {
@@ -288,7 +304,7 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                 ),
                                 CustomView.buildDropDown(
-                                    text: 'Select Gender',
+                                    text: gender,
                                     context: context,
                                     inputValue: gender,
                                     list: genderList,
