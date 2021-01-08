@@ -40,6 +40,7 @@ class Data {
     this.slider_background_color,
     this.slider_font_color,
     this.slider_text,
+    this.blu_app_version,
   });
 
   String dashboardImage;
@@ -51,6 +52,7 @@ class Data {
   String slider_text;
   String slider_font_color;
   String slider_background_color;
+  String blu_app_version;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         dashboardImage: json["dashboard_image"],
@@ -62,6 +64,7 @@ class Data {
         slider_text: json['slider_text'],
         slider_font_color: json['slider_font_color'],
         slider_background_color: json['slider_background_color'],
+        blu_app_version: json['blu_app_version'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -74,5 +77,6 @@ class Data {
         'slider_text': slider_text,
         'slider_font_color': slider_font_color,
         'slider_background_color': slider_background_color,
+        'blu_app_version': blu_app_version
       };
 }

@@ -28,11 +28,9 @@ class _VarifyOtpState extends State<VarifyOtp> {
           content: new Text(
               """Your registration for Blu Angel is completed. You can "LOGIN" once your profile get activated"""),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             new FlatButton(
               child: new Text("Ok"),
               onPressed: () {
-                // Navigator.of(context).pop();
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return LoginScreen();
                 }));
@@ -45,23 +43,17 @@ class _VarifyOtpState extends State<VarifyOtp> {
   }
 
   void _showDialogonError() {
-    // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
           title: new Text("Sorry"),
           content: new Text("Enter a valid OTP"),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             new FlatButton(
               child: new Text("Ok"),
               onPressed: () {
                 Navigator.of(context).pop();
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return LoginScreen();
-                // }));
               },
             ),
           ],
@@ -159,24 +151,10 @@ class _VarifyOtpState extends State<VarifyOtp> {
                             decoration: BoxDecoration(
                               color: Colors.blue[900],
                               borderRadius: BorderRadius.circular(10),
-                              // image: DecorationImage(
-                              //     fit: BoxFit.fill,
-                              //     image:
-                              //         AssetImage('assets/images/ButtonBG.png')),
                             ),
                           ),
                         ),
                       ),
-                      // RaisedButton(
-                      //   child: Text("Varify"),
-                      //   onPressed: () {
-                      //     if (otpController.text == widget.otp) {
-                      //       _showDialog();
-                      //     } else {
-                      //       _showDialogonError();
-                      //     }
-                      //   },
-                      // )
                     ],
                   ),
                 )),

@@ -1,3 +1,8 @@
+// import 'dart:collection';
+// import 'dart:io';
+// import 'dart:io' as Io;
+// import 'dart:convert';
+
 import 'dart:collection';
 import 'dart:io';
 import 'dart:io' as Io;
@@ -14,6 +19,7 @@ import 'package:blue_angel/utlis/values/styles.dart';
 import 'package:blue_angel/widgets/Dialog.dart';
 import 'package:blue_angel/widgets/custom_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -1064,7 +1070,9 @@ class InputRegistration extends StatelessWidget {
                 vertical: 4,
               ),
               child: TextFormField(
-                maxLength: maxlength,
+                inputFormatters: [
+                  new LengthLimitingTextInputFormatter(maxlength),
+                ],
                 controller: otpController,
                 initialValue: initialValue,
                 style: TextStyle(color: Color(0xff2d1f76), fontSize: 20.0),
