@@ -1,26 +1,65 @@
+import 'dart:convert';
+
 import 'package:blue_angel/models/bannerResponse.dart';
 import 'package:blue_angel/models/surveyReportResponse.dart';
+import 'package:blue_angel/network/api_call.dart';
+import 'package:blue_angel/network/api_constants.dart';
 import 'package:blue_angel/screens/complete_survey_show_customer_data.dart';
 import 'package:blue_angel/screens/report_customer_data_show.dart';
 import 'package:blue_angel/utlis/values/styles.dart';
 import 'package:blue_angel/widgets/custom_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class ReportPage extends StatefulWidget {
   final SurveyReportResponse surveyReportResponse;
   final BannerResponse bannerResponse;
   final bool completeOrReport;
+  final surveyId;
   ReportPage({
     @required this.surveyReportResponse,
     @required this.completeOrReport,
     @required this.bannerResponse,
+    @required this.surveyId,
   });
   @override
   _ReportPageState createState() => _ReportPageState();
 }
 
 class _ReportPageState extends State<ReportPage> {
+  // String surveyId = ' ';
+
+  Future<SurveyReportResponse> fetchSurveyReport({
+    @required String startDate,
+    @required String endDate,
+    // @required surveyId,
+
+  }) async {
+    final response = await http.post(
+      Uri.encodeFull(AppConstants.surveyReport),
+      headers: {
+        "accept": "application/json",
+        "authorization": "${ApiCall.token}",
+      },
+      body: json.encode({
+        "start_date": startDate,
+        "end_date": endDate,
+        "blu_angel": ApiCall.tokenCall,
+        "survey_id": widget.surveyId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final String responseString = response.body;
+      print("Response of SurveyReport is: "+responseString);
+      return surveyReportResponseFromJson(responseString);
+    } else {
+      return null;
+    }
+  }
+
+
+
   int top_nav;
   String accessToken;
   getDataFromSharedPrefs() async {
@@ -33,6 +72,19 @@ class _ReportPageState extends State<ReportPage> {
   @override
   void initState() {
     getDataFromSharedPrefs();
+    fetchSurveyReport( endDate: DateTime.now().toString().split(' ')[0],
+      startDate: DateTime.now()
+          .subtract(
+        Duration(
+          days: 90,
+        ),
+      )
+          .toString()
+          .split(' ')[0],
+      // surveyId: widget
+      //     .surveyListResponse.result[index].survey.id,
+    );
+    // print('''Survey report reponse is: ${widget.surveyReportResponse.result.first}''');
     String ss = widget.bannerResponse.data.top_nav;
     String s = "0xff" + ss.substring(1);
     top_nav = int.parse(s);

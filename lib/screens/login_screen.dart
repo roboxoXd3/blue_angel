@@ -24,6 +24,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String activationMessage = '';
+  final _formKey = GlobalKey<FormState>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   void _showDialog() {
     // flutter defined function
@@ -43,7 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 // setState(() {
                 //   isLoading = !isLoading;
                 // });
-                // Dialog.
+                Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+                    .pop();
                 // Navigator.push(context, MaterialPageRoute(builder: (context) {
                 //   return LoginScreen();
                 // }));
@@ -132,229 +134,223 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Color(0xFF8fe9ff),
                                   color1: Colors.transparent,
                                   listColor: ksubBg,
-                                  child: ListView(
-                                    // mainAxisAlignment: MainAxisAlignment.start,
-                                    // crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Container(
-                                        margin: const EdgeInsets.only(
-                                            top: 20, left: 20.0),
-                                        child: Text(
-                                          'LOGIN',
-                                          style: kheadingStyle.apply(
-                                              color: Color(0xff2b1f75),
-                                              fontSizeFactor: 2,
-                                              fontWeightDelta: 4),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: const EdgeInsets.only(
-                                            top: 20, left: 20),
-                                        child: Text(
-                                          'MOBILE NUMBER',
-                                          style: kheadingStyle.apply(
-                                            fontWeightDelta: 3,
-                                            fontSizeFactor: 1.2,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: const EdgeInsets.only(top: 20),
-                                        child: CustomView.editTextField(
-                                            fn: (input) {
-                                              setState(() {
-                                                mobilenumber = input.toString();
-                                              });
-                                            },
-                                            color: Colors.red,
-                                            keyborad: TextInputType.number,
-                                            // labelText: '+91-1010101010',
-                                            lengthLimiting: 10),
-                                      ),
-                                      Container(
-                                        margin: const EdgeInsets.only(
-                                            top: 20, left: 20),
-                                        child: Text(
-                                          'OTP',
-                                          style: kheadingStyle.apply(
-                                            fontWeightDelta: 3,
-                                            fontSizeFactor: 1.2,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: const EdgeInsets.only(top: 20),
-                                        child: CustomView.editTextField(
-                                          fn: (input) {
-                                            otp = input.toString();
-                                          },
-
-                                          color: Colors.transparent,
-                                          keyborad: TextInputType.number,
-                                          // labelText: 'OTP',
-                                          lengthLimiting: 6,
-                                        ),
-                                      ),
-                                      Container(
-                                        // alignment: Alignment.bottomRight,
-                                        margin: const EdgeInsets.only(
-                                          top: 20,
-                                          left: 20,
-                                          right: 20,
-                                        ),
-                                        child: CustomView.button(
-                                          circularRadius: 5,
-                                          isCircular: true,
-                                          buttonColor: Color(0xffb3e0f7),
-                                          buttonName: nameChange
-                                              ? 'GENERATE OTP'
-                                              : 'RESEND OTP',
-                                          color: kfontColorBlue4,
-                                          function: () async {
-                                            Dialogs.showLoadingDialog(
-                                                context, _keyLoader);
-                                            setState(() {
-                                              // isLoading = !isLoading;
-                                            });
-                                            final LoginResponse loginResponse =
-                                                await ApiCall.postLogin(
-                                              mobileNumber: mobilenumber,
-                                            );
-
-                                            print(loginResponse.message);
-
-                                            setState(() {
-                                              activationMessage =
-                                                  loginResponse.message;
-                                            });
-                                            _showDialog();
-                                            setState(() {
-                                              // isLoading = !isLoading;
-                                            });
-                                            // Navigator.of(context).pop();
-
-                                            if (mobilenumber.length == 0) {
-                                              CustomView.showInDialog(
-                                                  context,
-                                                  "Error",
-                                                  "Mobile Number is Empty!",
-                                                  () {
-                                                Navigator.of(context).pop();
-                                                Navigator.of(
-                                                        _keyLoader
-                                                            .currentContext,
-                                                        rootNavigator: true)
-                                                    .pop();
-                                              });
-                                            } else if (mobilenumber.length <
-                                                10) {
-                                              CustomView.showInDialog(
-                                                  context,
-                                                  "Error",
-                                                  "Mobile Number is atleast 10 digits",
-                                                  () {
-                                                Navigator.of(context).pop();
-                                                Navigator.of(
-                                                        _keyLoader
-                                                            .currentContext,
-                                                        rootNavigator: true)
-                                                    .pop();
-                                              });
-                                            } else {
-                                              if (loginResponse.status ==
-                                                  "success") {
-                                                Navigator.of(context).pop();
-                                                // isLoading = !isLoading;
-                                                Navigator.of(
-                                                        _keyLoader
-                                                            .currentContext,
-                                                        rootNavigator: true)
-                                                    .pop();
-                                                setState(() {
-                                                  // isLoading = !isLoading;
-                                                  nameChange = !nameChange;
-                                                  response =
-                                                      loginResponse.status;
-                                                  // otp = loginResponse.otp.toString();
-
-                                                  print(loginResponse.otp
-                                                      .toString());
-                                                });
-                                              }
-                                            }
-
-                                            // print(loginResponse.otp.toString());
-                                          },
-                                          height: 50,
-                                          width: 180,
-                                          textSize: 20,
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 50,
-                                        width: 250,
-                                        // alignment: Alignment.bottomRight,
-                                        margin: const EdgeInsets.only(
-                                          top: 20,
-                                          left: 20,
-                                          right: 20,
-                                        ),
-                                        child: RaisedButton(
-                                          color: Colors.blue[900],
+                                  child: Form(
+                                    key: _formKey,
+                                    child: ListView(
+                                      // mainAxisAlignment: MainAxisAlignment.start,
+                                      // crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              top: 20, left: 20.0),
                                           child: Text(
-                                            'ENTER',
+                                            'LOGIN',
                                             style: kheadingStyle.apply(
-                                              color: Colors.white,
-                                              fontWeightDelta: 4,
+                                                color: Color(0xff2b1f75),
+                                                fontSizeFactor: 2,
+                                                fontWeightDelta: 4),
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              top: 20, left: 20),
+                                          child: Text(
+                                            'MOBILE NUMBER',
+                                            style: kheadingStyle.apply(
+                                              fontWeightDelta: 3,
+                                              fontSizeFactor: 1.2,
                                             ),
                                           ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
+                                        ),
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 20),
+                                          child: CustomView.editTextField(
+                                              validator: (value) {
+                                                if (value.toString().isEmpty) {
+                                                  return "Enter a valid number";
+                                                } else if (value
+                                                        .toString()
+                                                        .characters
+                                                        .length <
+                                                    10) {
+                                                  return "Length should be 10";
+                                                }
+                                                return null;
+                                              },
+                                              fn: (input) {
+                                                setState(() {
+                                                  mobilenumber =
+                                                      input.toString();
+                                                });
+                                              },
+                                              color: Colors.red,
+                                              keyborad: TextInputType.number,
+                                              // labelText: '+91-1010101010',
+                                              lengthLimiting: 10),
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              top: 20, left: 20),
+                                          child: Text(
+                                            'OTP',
+                                            style: kheadingStyle.apply(
+                                              fontWeightDelta: 3,
+                                              fontSizeFactor: 1.2,
+                                            ),
                                           ),
-                                          onPressed: () async {
-                                            Dialogs.showLoadingDialog(
-                                                context, _keyLoader);
-                                            if (mobilenumber == null) {
-                                              CustomView.showInDialog(
-                                                  context,
-                                                  "Error",
-                                                  "Mobile Number is Empty!",
-                                                  () {
+                                        ),
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 20),
+                                          child: CustomView.editTextField(
+                                            fn: (input) {
+                                              otp = input.toString();
+                                            },
+
+                                            color: Colors.transparent,
+                                            keyborad: TextInputType.number,
+                                            // labelText: 'OTP',
+                                            lengthLimiting: 6,
+                                          ),
+                                        ),
+                                        Container(
+                                          // alignment: Alignment.bottomRight,
+                                          margin: const EdgeInsets.only(
+                                            top: 20,
+                                            left: 20,
+                                            right: 20,
+                                          ),
+                                          child: CustomView.button(
+                                            circularRadius: 5,
+                                            isCircular: true,
+                                            buttonColor: Color(0xffb3e0f7),
+                                            buttonName: nameChange
+                                                ? 'GENERATE OTP'
+                                                : 'RESEND OTP',
+                                            color: kfontColorBlue4,
+                                            function: () async {
+                                              Dialogs.showLoadingDialog(
+                                                  context, _keyLoader);
+                                              setState(() {
+                                                // isLoading = !isLoading;
+                                              });
+
+                                              if (_formKey.currentState
+                                                  .validate()) {
+                                                final LoginResponse
+                                                    loginResponse =
+                                                    await ApiCall.postLogin(
+                                                  mobileNumber: mobilenumber,
+                                                );
+
+                                                print(loginResponse.message);
+
+                                                setState(() {
+                                                  activationMessage =
+                                                      loginResponse.message;
+                                                });
+                                                _showDialog();
+                                                setState(() {
+                                                  // isLoading = !isLoading;
+                                                });
+                                                // Navigator.of(context).pop();
+
+                                                if (mobilenumber.length == 0) {
+                                                  CustomView.showInDialog(
+                                                      context,
+                                                      "Error",
+                                                      "Mobile Number is Empty!",
+                                                      () {
+                                                    // Navigator.of(context).pop();
+                                                    Navigator.of(
+                                                            _keyLoader
+                                                                .currentContext,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                  });
+                                                } else if (mobilenumber.length <
+                                                    10) {
+                                                  CustomView.showInDialog(
+                                                      context,
+                                                      "Error",
+                                                      "Mobile Number is atleast 10 digits",
+                                                      () {
+                                                    // Navigator.of(context).pop();
+                                                    Navigator.of(
+                                                            _keyLoader
+                                                                .currentContext,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                  });
+                                                } else {
+                                                  if (loginResponse.status ==
+                                                      "success") {
+                                                    Navigator.of(context).pop();
+                                                    // isLoading = !isLoading;
+                                                    Navigator.of(
+                                                            _keyLoader
+                                                                .currentContext,
+                                                            rootNavigator: true)
+                                                        .pop();
+                                                    setState(() {
+                                                      // isLoading = !isLoading;
+                                                      nameChange = !nameChange;
+                                                      response =
+                                                          loginResponse.status;
+                                                      // otp = loginResponse.otp.toString();
+
+                                                      print(loginResponse.otp
+                                                          .toString());
+                                                    });
+                                                  }
+                                                }
+                                              } else {
                                                 Navigator.of(context).pop();
                                                 Navigator.of(
                                                         _keyLoader
                                                             .currentContext,
                                                         rootNavigator: true)
                                                     .pop();
-                                                setState(() {
-                                                  // isLoading = false;
-                                                });
-                                              });
-                                            } else if (mobilenumber.length <
-                                                10) {
-                                              CustomView.showInDialog(
-                                                  context,
-                                                  "Error",
-                                                  "Mobile Number is atleast 10 digits",
-                                                  () {
-                                                Navigator.of(context).pop();
-                                                Navigator.of(
-                                                        _keyLoader
-                                                            .currentContext,
-                                                        rootNavigator: true)
-                                                    .pop();
-                                                setState(() {
-                                                  // isLoading = false;
-                                                });
-                                              });
-                                            } else {
-                                              if (response == null) {
-                                                // _showDialog();
+                                              }
+
+                                              // print(loginResponse.otp.toString());
+                                            },
+                                            height: 50,
+                                            width: 180,
+                                            textSize: 20,
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 50,
+                                          width: 250,
+                                          // alignment: Alignment.bottomRight,
+                                          margin: const EdgeInsets.only(
+                                            top: 20,
+                                            left: 20,
+                                            right: 20,
+                                          ),
+                                          child: RaisedButton(
+                                            color: Colors.blue[900],
+                                            child: Text(
+                                              'ENTER',
+                                              style: kheadingStyle.apply(
+                                                color: Colors.white,
+                                                fontWeightDelta: 4,
+                                              ),
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            onPressed: () async {
+                                              Dialogs.showLoadingDialog(
+                                                  context, _keyLoader);
+                                              if (mobilenumber == null) {
                                                 CustomView.showInDialog(
                                                     context,
                                                     "Error",
-                                                    "Please generate otp first",
+                                                    "Mobile Number is Empty!",
                                                     () {
                                                   Navigator.of(context).pop();
                                                   Navigator.of(
@@ -366,213 +362,262 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     // isLoading = false;
                                                   });
                                                 });
-                                              } else if (otp == null) {
+                                              } else if (mobilenumber.length <
+                                                  10) {
                                                 CustomView.showInDialog(
                                                     context,
                                                     "Error",
-                                                    "Please generate otp first",
+                                                    "Mobile Number is atleast 10 digits",
                                                     () {
                                                   Navigator.of(context).pop();
-                                                  // Navigator.of(
-                                                  //         _keyLoader
-                                                  //             .currentContext,
-                                                  //         rootNavigator: true)
-                                                  //     .pop();
+                                                  Navigator.of(
+                                                          _keyLoader
+                                                              .currentContext,
+                                                          rootNavigator: true)
+                                                      .pop();
                                                   setState(() {
                                                     // isLoading = false;
                                                   });
                                                 });
-                                              } else if (otp.length < 6) {
-                                                CustomView.showInDialog(
-                                                    context,
-                                                    "Error",
-                                                    "OTP at least 6 digits",
-                                                    () {
-                                                  Navigator.of(context).pop();
-                                                  // Navigator.of(
-                                                  //         _keyLoader
-                                                  //             .currentContext,
-                                                  //         rootNavigator: true)
-                                                  //     .pop();
-                                                  setState(() {
-                                                    // isLoading = false;
-                                                  });
-                                                });
-                                              } else if (response ==
-                                                  "success") {
-                                                Navigator.of(context).pop();
-                                                // Navigator.of(
-                                                //         _keyLoader
-                                                //             .currentContext,
-                                                //         rootNavigator: true)
-                                                //     .pop();
-                                                setState(() {
-                                                  //   isLoading = false;
-                                                });
-                                                VerifyResponse verifyResponse =
-                                                    await ApiCall.postVerify(
-                                                  mobileNumber: mobilenumber,
-                                                  otp: otp,
-                                                );
-
-                                                if (verifyResponse.status ==
-                                                    "success") {
-                                                  print(verifyResponse.status);
-                                                  print('otp is: $otp');
-                                                  SharedPreferences
-                                                      sharedPreferences =
-                                                      await SharedPreferences
-                                                          .getInstance();
-                                                  sharedPreferences.setString(
-                                                      "accessToken",
-                                                      verifyResponse.token);
-                                                  // sharedPreferences
-                                                  //     .setString(
-                                                  //         "tokenCall",
-                                                  //         verifyResponse
-                                                  //             .result.id
-                                                  //             .toString());
-
-                                                  sharedPreferences.setString(
-                                                      "tokenCall",
-                                                      verifyResponse.result.id
-                                                          .toString());
-
-                                                  sharedPreferences.setString(
-                                                      "firstName",
-                                                      verifyResponse
-                                                          .result.firstName
-                                                          .toString());
-
-                                                  sharedPreferences.setString(
-                                                      "lastName",
-                                                      verifyResponse
-                                                          .result.lastName
-                                                          .toString());
-
-                                                  sharedPreferences.setString(
-                                                      "dob",
-                                                      verifyResponse.result.dob
-                                                          .toString());
-
-                                                  sharedPreferences.setString(
-                                                      "gender",
-                                                      verifyResponse
-                                                          .result.gender
-                                                          .toString());
-
-                                                  sharedPreferences.setBool(
-                                                      "isSigned", true);
-                                                  setState(() {
-                                                    ApiCall.token =
-                                                        verifyResponse.token;
-                                                    print(verifyResponse.token);
-                                                    ApiCall.tokenCall =
-                                                        verifyResponse.result.id
-                                                            .toString();
-                                                    print(verifyResponse
-                                                        .result.id
-                                                        .toString());
-
-                                                    CustomView.firstName =
-                                                        verifyResponse
-                                                            .result.firstName;
-                                                    CustomView.lastName =
-                                                        verifyResponse
-                                                            .result.lastName;
-                                                    CustomView.dob =
-                                                        verifyResponse
-                                                            .result.dob;
-                                                    CustomView.gender =
-                                                        verifyResponse
-                                                            .result.gender;
-                                                    // isLoading = !isLoading;
-                                                  });
-                                                  final BannerResponse
-                                                      bannerResponse =
-                                                      await ApiCall.getBanner();
-                                                  if (bannerResponse.status ==
-                                                      "success") {
-                                                    sharedPreferences.setString(
-                                                        "top_nav",
-                                                        bannerResponse
-                                                            .data.top_nav
-                                                            .toString());
-                                                    sharedPreferences.setString(
-                                                        "backendS",
-                                                        bannerResponse.data
-                                                            .blu_app_version
-                                                            .toString());
-
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            HomeScreen(
-                                                          bannerResponse:
-                                                              bannerResponse,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                } else if (verifyResponse
-                                                        .status ==
-                                                    "error") {
-                                                  print(verifyResponse.status);
+                                              } else {
+                                                if (response == null) {
+                                                  // _showDialog();
                                                   CustomView.showInDialog(
                                                       context,
                                                       "Error",
-                                                      verifyResponse.message,
+                                                      "Please generate otp first",
                                                       () {
                                                     Navigator.of(context).pop();
+                                                    Navigator.of(
+                                                            _keyLoader
+                                                                .currentContext,
+                                                            rootNavigator: true)
+                                                        .pop();
                                                     setState(() {
-                                                      // isLoading = !isLoading;
+                                                      // isLoading = false;
                                                     });
                                                   });
+                                                } else if (otp == null) {
+                                                  CustomView.showInDialog(
+                                                      context,
+                                                      "Error",
+                                                      "Please generate otp first",
+                                                      () {
+                                                    Navigator.of(context).pop();
+                                                    // Navigator.of(
+                                                    //         _keyLoader
+                                                    //             .currentContext,
+                                                    //         rootNavigator: true)
+                                                    //     .pop();
+                                                    setState(() {
+                                                      // isLoading = false;
+                                                    });
+                                                  });
+                                                } else if (otp.length < 6) {
+                                                  CustomView.showInDialog(
+                                                      context,
+                                                      "Error",
+                                                      "OTP at least 6 digits",
+                                                      () {
+                                                    Navigator.of(context).pop();
+                                                    // Navigator.of(
+                                                    //         _keyLoader
+                                                    //             .currentContext,
+                                                    //         rootNavigator: true)
+                                                    //     .pop();
+                                                    setState(() {
+                                                      // isLoading = false;
+                                                    });
+                                                  });
+                                                } else if (response ==
+                                                    "success") {
+                                                  Navigator.of(context).pop();
+                                                  // Navigator.of(
+                                                  //         _keyLoader
+                                                  //             .currentContext,
+                                                  //         rootNavigator: true)
+                                                  //     .pop();
+                                                  setState(() {
+                                                    //   isLoading = false;
+                                                  });
+                                                  VerifyResponse
+                                                      verifyResponse =
+                                                      await ApiCall.postVerify(
+                                                    mobileNumber: mobilenumber,
+                                                    otp: otp,
+                                                  );
+
+                                                  if (verifyResponse.status ==
+                                                      "success") {
+                                                    print(
+                                                        verifyResponse.status);
+                                                    print('otp is: $otp');
+                                                    SharedPreferences
+                                                        sharedPreferences =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    sharedPreferences.setString(
+                                                        "accessToken",
+                                                        verifyResponse.token);
+                                                    // sharedPreferences
+                                                    //     .setString(
+                                                    //         "tokenCall",
+                                                    //         verifyResponse
+                                                    //             .result.id
+                                                    //             .toString());
+
+                                                    sharedPreferences.setString(
+                                                        "tokenCall",
+                                                        verifyResponse.result.id
+                                                            .toString());
+
+                                                    sharedPreferences.setString(
+                                                        "firstName",
+                                                        verifyResponse
+                                                            .result.firstName
+                                                            .toString());
+
+                                                    sharedPreferences.setString(
+                                                        "lastName",
+                                                        verifyResponse
+                                                            .result.lastName
+                                                            .toString());
+
+                                                    sharedPreferences.setString(
+                                                        "dob",
+                                                        verifyResponse
+                                                            .result.dob
+                                                            .toString());
+
+                                                    sharedPreferences.setString(
+                                                        "gender",
+                                                        verifyResponse
+                                                            .result.gender
+                                                            .toString());
+
+                                                    sharedPreferences.setBool(
+                                                        "isSigned", true);
+                                                    setState(() {
+                                                      ApiCall.token =
+                                                          verifyResponse.token;
+                                                      print(
+                                                          verifyResponse.token);
+                                                      ApiCall.tokenCall =
+                                                          verifyResponse
+                                                              .result.id
+                                                              .toString();
+                                                      sharedPreferences.setString("user_id", verifyResponse
+                                                          .result.id
+                                                          .toString());
+                                                      print(verifyResponse
+                                                          .result.id
+                                                          .toString());
+
+                                                      CustomView.firstName =
+                                                          verifyResponse
+                                                              .result.firstName;
+                                                      CustomView.lastName =
+                                                          verifyResponse
+                                                              .result.lastName;
+                                                      CustomView.dob =
+                                                          verifyResponse
+                                                              .result.dob;
+                                                      CustomView.gender =
+                                                          verifyResponse
+                                                              .result.gender;
+                                                      // isLoading = !isLoading;
+                                                    });
+                                                    final BannerResponse
+                                                        bannerResponse =
+                                                        await ApiCall
+                                                            .getBanner();
+                                                    if (bannerResponse.status ==
+                                                        "success") {
+                                                      sharedPreferences
+                                                          .setString(
+                                                              "top_nav",
+                                                              bannerResponse
+                                                                  .data.top_nav
+                                                                  .toString());
+                                                      sharedPreferences.setString(
+                                                          "backendS",
+                                                          bannerResponse.data
+                                                              .blu_app_version
+                                                              .toString());
+
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              HomeScreen(
+                                                            bannerResponse:
+                                                                bannerResponse,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  } else if (verifyResponse
+                                                          .status ==
+                                                      "error") {
+                                                    print(
+                                                        verifyResponse.status);
+                                                    CustomView.showInDialog(
+                                                        context,
+                                                        "Error",
+                                                        verifyResponse.message,
+                                                        () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      setState(() {
+                                                        // isLoading = !isLoading;
+                                                      });
+                                                    });
+                                                  }
                                                 }
                                               }
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                      new Container(
-                                        margin: const EdgeInsets.only(
-                                          top: 20,
-                                          left: 20,
-                                          bottom: 10.0,
-                                        ),
-                                        child: new FlatButton(
-                                          onPressed: () async {
-                                            // print('jo');
-                                            // ApiCall.getSwData();
-
-                                            final StateListResponse
-                                                stateListResponse =
-                                                await ApiCall.postState();
-                                            if (stateListResponse.status ==
-                                                "success") {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Registration(),
-                                                  //     SignUp(
-                                                  //   // listData: ApiCall.listData,
-                                                  //   stateListResponse:
-                                                  //       stateListResponse,
-                                                  // ),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          child: Text(
-                                            'REGISTRATION',
-                                            style: kheadingStyle.apply(
-                                              fontWeightDelta: 5,
-                                            ),
-                                            textAlign: TextAlign.center,
+                                            },
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        new Container(
+                                          margin: const EdgeInsets.only(
+                                            top: 20,
+                                            left: 20,
+                                            bottom: 10.0,
+                                          ),
+                                          child: new FlatButton(
+                                            onPressed: () async {
+                                              // print('jo');
+                                              // ApiCall.getSwData();
+
+                                              final StateListResponse
+                                                  stateListResponse =
+                                                  await ApiCall.postState();
+                                              if (stateListResponse.status ==
+                                                  "success") {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Registration(),
+                                                    //     SignUp(
+                                                    //   // listData: ApiCall.listData,
+                                                    //   stateListResponse:
+                                                    //       stateListResponse,
+                                                    // ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Text(
+                                              'REGISTRATION',
+                                              style: kheadingStyle.apply(
+                                                fontWeightDelta: 5,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

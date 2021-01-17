@@ -49,7 +49,7 @@ class _AssignReportSurveyState extends State<AssignReportSurvey> {
     getDataFromSharedPrefs();
     status = widget.surveyListResponse.status;
     _count = widget.surveyListResponse.result.length;
-    print('response ${widget.surveyListResponse.status}');
+    print('id is  ${widget.surveyListResponse.result[0].id}');
     isLoading = false;
     String ss = widget.bannerResponse.data.top_nav;
     String s = "0xff" + ss.substring(1);
@@ -129,8 +129,11 @@ class _AssignReportSurveyState extends State<AssignReportSurvey> {
                             );
                             sharedPreferences.setString(
                                 "accessToken", surveyReportResponse.token);
+                            sharedPreferences.setString("SurveyId", widget
+                                .surveyListResponse.result[index].survey.id);
                             setState(() {
                               ApiCall.token = surveyReportResponse.token;
+
                               isLoading = false;
                             });
                             print(surveyReportResponse.status);
@@ -141,6 +144,8 @@ class _AssignReportSurveyState extends State<AssignReportSurvey> {
                                   completeOrReport:
                                       widget.changeReport ? true : false,
                                   surveyReportResponse: surveyReportResponse,
+                                  surveyId: widget
+                                      .surveyListResponse.result[index].survey.id,
                                 ),
                               ),
                             );

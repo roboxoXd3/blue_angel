@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../edit_profile.dart';
+import '../EditProfile.dart';
 import '../surveyList.dart';
 import 'package:package_info/package_info.dart';
 import 'package:store_redirect/store_redirect.dart';
@@ -151,9 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           child: CustomView.buildContainerBackgroundImage(
             context: context,
-            child: (nativeS == 0 && backendS == 0)
+            child: (nativeAppversion == null && backendAppVersion == null)
                 ? CircularProgressIndicator()
-                : (nativeS < backendS)
+                : (nativeAppversion.compareTo(backendAppVersion) < 0)
                     ? AlertDialog(
                         title: Text(
                           "App Update Available",
@@ -196,45 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.all(4.0),
-                          //   child: Text(
-                          //     nativeS.toString(),
-                          //     style: TextStyle(color: Colors.red, fontSize: 20),
-                          //   ),
-                          // ),
-                          // Padding(
-                          //   padding: const EdgeInsets.all(4.0),
-                          //   child: Text(
-                          //     backendS.toString(),
-                          //     style: TextStyle(color: Colors.red, fontSize: 20),
-                          //   ),
-                          // ),
 
-                          // Expanded(
-                          //   child: Container(
-                          //     height: 10,
-                          //     color: Color(s_background_color),
-                          //     child: new MarqueeWidget(
-                          //       text: sliderText,
-                          //       textStyle: new TextStyle(
-                          //           fontSize: 16.0, color: Color(s_font_color)),
-                          //       scrollAxis: Axis.horizontal,
-                          //     ),
-                          //   ),
-                          // ),
-                          // Expanded(
-                          //   child: Container(
-                          //     color: Color(s_background_color),
-                          //     child: Marquee(
-                          //       blankSpace: 600,
-                          //       text: sliderText,
-                          //       style:
-                          //           TextStyle(color: Color(s_font_color), fontSize: 20),
-                          //     ),
-                          //   ),
-                          //   // ),
-                          // ),
                           Row(
                             children: [
                               Container(
@@ -371,6 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               context,
                                               'ReportPage-Icon',
                                               'report page', () async {
+
                                             final SurveyListResponse
                                                 surveyListResponse =
                                                 await ApiCall.getSurveyList();

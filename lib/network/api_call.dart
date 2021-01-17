@@ -81,6 +81,7 @@ class ApiCall {
     @required String startDate,
     @required String endDate,
     @required surveyId,
+
   }) async {
     final response = await http.post(
       Uri.encodeFull(AppConstants.surveyReport),
@@ -92,10 +93,11 @@ class ApiCall {
         "start_date": startDate,
         "end_date": endDate,
         "blu_angel": tokenCall,
-        "survey_id": surveyId,
+        "survey_id": 'surveyId',
       }),
     );
     if (response.statusCode == 200) {
+      print("Inside survey report");
       final String responseString = response.body;
       return surveyReportResponseFromJson(responseString);
     } else {
@@ -105,7 +107,9 @@ class ApiCall {
 
   // survey submit api
   static Future<SurveySubmitResponse> getSurveySubmit({
+    @required String accesstoken,
     @required String surveyId,
+    @required String blue_angel,
     @required String fullName,
     @required String address,
     @required String village,
@@ -124,14 +128,14 @@ class ApiCall {
     @required String image,
   }) async {
     final response = await http.post(
-      Uri.encodeFull(AppConstants.surveySubmit),
+      Uri.encodeFull('http://139.59.75.40:4000/app/survey-submit'),
       headers: {
         "accept": "application/json",
-        "authorization": "$token",
+        "authorization": "$accesstoken",
       },
       body: json.encode({
         "surveys": surveyId,
-        "blu_angel": tokenCall,
+        "blu_angel": blue_angel,
         "full_name": fullName,
         "address": address,
         "village": village,
@@ -143,8 +147,8 @@ class ApiCall {
         "pincode": pincode,
         "mobile": mobileNumber,
         "form_data": formData,
-        "product": products,
-        "qty": qty,
+        "product": "null",
+        "qty": "1",
         "image": image,
         "lat": lat,
         "lng": lng,

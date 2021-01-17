@@ -311,13 +311,15 @@ class CustomView {
       ValueKey key,
       String prefilledText}) {
     return Container(
+      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
+      margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
       // color: Colors.blue[50],
       // alignment: Alignment.bottomCenter,
       height: height,
-      margin: EdgeInsets.symmetric(
-        horizontal: 20.0,
-        vertical: 4,
-      ),
+      // margin: EdgeInsets.symmetric(
+      //   horizontal: 20.0,
+      //   vertical: 4,
+      // ),
       child: TextFormField(
         initialValue: prefilledText,
         key: key,

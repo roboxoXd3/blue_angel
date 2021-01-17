@@ -39,6 +39,7 @@ class _ReportPageStartState extends State<ReportPageStart> {
   @override
   void initState() {
     getDataFromSharedPrefs();
+    print("Survey id is: " + widget.surveyId);
     String ss = widget.bannerResponse.data.top_nav;
     String s = "0xff" + ss.substring(1);
     top_nav = int.parse(s);

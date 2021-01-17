@@ -1,6 +1,9 @@
 class AppConstants {
-  static final String baseUrl = 'http://139.59.75.40:4000/app/';
-  //  'https://api.bluangel.in/app/';
+  static final String baseUrl =
+      'http://139.59.75.40:4000/app/';
+
+      // 'https://api.bluangel.in/app/';
+  //  'http://139.59.75.40:4000/app/';
 
   static final String stateList = baseUrl + 'state-list';
 

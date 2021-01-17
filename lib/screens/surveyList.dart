@@ -26,7 +26,7 @@ class _SurveyListState extends State<SurveyList> {
   List list;
   List fieldName = new List();
   String accessToken;
-
+  String token;
   getDataFromSharedPrefs() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
@@ -104,6 +104,7 @@ class _SurveyListState extends State<SurveyList> {
                         surveyId:
                             widget.surveyListResponse.result[index].survey.id,
                         stateListResponse: stateListResponse,
+                        token: widget.surveyListResponse.token,
                       ),
                     ));
                   }

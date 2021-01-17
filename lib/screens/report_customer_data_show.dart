@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ReportcustomerDataShow extends StatefulWidget {
-  // final List<Map<String, String>> formData;
-  // final SurveyReportResponse surveyReportResponse;
+
   final String date;
   final String fullName,
       address,

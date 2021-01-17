@@ -23,6 +23,7 @@ class ActiveSurveyForm extends StatefulWidget {
   final String surveyId;
   final StateListResponse stateListResponse;
   final BannerResponse bannerResponse;
+  final String token;
 
   const ActiveSurveyForm(
       {Key key,
@@ -31,7 +32,9 @@ class ActiveSurveyForm extends StatefulWidget {
       @required this.products,
       @required this.surveyId,
       @required this.stateListResponse,
-      @required this.bannerResponse})
+      @required this.bannerResponse,
+        @required this.token
+      })
       : super(key: key);
   @override
   _ActiveSurveyFormState createState() => _ActiveSurveyFormState();
@@ -40,7 +43,7 @@ class ActiveSurveyForm extends StatefulWidget {
 class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
   List _surveyForm, products;
 
-  int item = 1;
+  int _itemCount = 0;
   int top_nav;
   final format = DateFormat("yyyy/MM/dd");
 
@@ -722,12 +725,15 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                           shrinkWrap: true,
                                           itemCount: products.length,
                                           itemBuilder: (context, index) {
+                                            // int itemIndex = 1;
+                                            // int item=1;
+                                            // int item = 1;
                                             // inputDoc["product"] = products[index].name;
                                             // productList.add(products[index].name);
                                             print(inputDoc);
                                             inputDoc["Product"] =
                                                 products[index].name;
-                                            inputDoc["qty"] = item.toString();
+                                            inputDoc["qty"] = _itemCount.toString();
                                             print(inputDoc);
                                             return Column(
                                               mainAxisAlignment:
@@ -758,53 +764,70 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                                           ),
                                                         ),
                                                       ),
-                                                      IconButton(
-                                                          icon: Icon(
-                                                            Icons
-                                                                .add_circle_outline,
-                                                            color: Colors
-                                                                .blue[900],
-                                                          ),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              item++;
-                                                              inputDoc["qty"] =
-                                                                  item.toString();
-                                                              print(inputDoc);
-                                                            });
-                                                          }),
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                          left: 2,
-                                                          right: 2,
-                                                        ),
-                                                        child: Text(
-                                                          item.toString(),
-                                                          style: kheadingStyle
-                                                              .apply(
-                                                            fontWeightDelta: 3,
-                                                            fontSizeFactor: 1.0,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      IconButton(
-                                                          icon: Icon(
-                                                            Icons
-                                                                .remove_circle_outline,
-                                                            color: Colors
-                                                                .blue[900],
-                                                          ),
-                                                          onPressed: () {
-                                                            if (item > 1) {
-                                                              setState(() {
-                                                                item--;
-                                                                inputDoc[
-                                                                        "qty"] =
-                                                                    item.toString();
-                                                                print(inputDoc);
-                                                              });
-                                                            }
-                                                          }),
+                                                      // IconButton(
+                                                      //     icon: Icon(
+                                                      //       Icons
+                                                      //           .add_circle_outline,
+                                                      //       color: Colors
+                                                      //           .blue[900],
+                                                      //     ),
+                                                      //     onPressed: () {
+                                                      //       // int temp = item;
+                                                      //       setState(() {
+                                                      //         // item++;
+                                                      //         // item = item;
+                                                      //         inputDoc["qty"] =
+                                                      //             item.toString();
+                                                      //         print(inputDoc);
+                                                      //       });
+                                                      //     }),
+                                                      // Container(
+                                                      //   margin: EdgeInsets.only(
+                                                      //     left: 2,
+                                                      //     right: 2,
+                                                      //   ),
+                                                      //   child: Text(
+                                                      //     item.toString(),
+                                                      //     style: kheadingStyle
+                                                      //         .apply(
+                                                      //       fontWeightDelta: 3,
+                                                      //       fontSizeFactor: 1.0,
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+                                                      // IconButton(
+                                                      //     icon: Icon(
+                                                      //       Icons
+                                                      //           .remove_circle_outline,
+                                                      //       color: Colors
+                                                      //           .blue[900],
+                                                      //     ),
+                                                      //     onPressed: () {
+                                                      //       int item=1;
+                                                      //       if (item > 1) {
+                                                      //         setState(() {
+                                                      //           item--;
+                                                      //           item = item;
+                                                      //           inputDoc[
+                                                      //                   "qty"] =
+                                                      //               item.toString();
+                                                      //           print(inputDoc);
+                                                      //         });
+                                                      //       }
+                                                      //     }),
+                                                      _itemCount!=0? new  IconButton(icon: new Icon(Icons.remove_circle),onPressed: ()=>setState(() {
+                                                        _itemCount--;
+                                                        setState(() {
+                                                          inputDoc["qty"] = _itemCount.toString();
+                                                        });
+                                                      }),):new Container(),
+                                                      new Text(_itemCount.toString()),
+                                                      new IconButton(icon: new Icon(Icons.add_circle),onPressed: ()=>setState(() {
+                                                        _itemCount++;
+                                                       setState(() {
+                                                         inputDoc["qty"] = _itemCount.toString();
+                                                       });
+                                                      }))
                                                     ],
                                                   ),
                                                 ),
@@ -945,15 +968,17 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) => DynamicSurveyForm(
-                                      bannerResponse: bannerResponse,
+                                      // bannerResponse: bannerResponse,
                                       surveyForm: widget.surveyForm,
                                       surveyName: widget.surveyName,
                                       inputDoc: inputDoc,
                                       surveyId: widget.surveyId,
+
                                       // productList: productList,
                                       lng: lng,
                                       lat: lat,
                                       image: img64,
+                                      // token: widget.token,
                                     ),
                                   ),
                                 );
