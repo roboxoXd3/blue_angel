@@ -295,7 +295,7 @@ class _SignUpState extends State<SignUp> {
                                       child: CustomView.editTextField(
                                           controller: firstNameController,
                                           key: ValueKey('firstName'),
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               firstName = input.toString();
                                               print('$firstName');
@@ -322,7 +322,7 @@ class _SignUpState extends State<SignUp> {
                                       child: CustomView.editTextField(
                                         controller: lasttNameController,
                                         key: ValueKey('lastName'),
-                                        fn: (input) {
+                                        onChanged: (input) {
                                           setState(() {
                                             lastName = input.toString();
                                             print('$lastName');
@@ -357,7 +357,7 @@ class _SignUpState extends State<SignUp> {
                                           print(gender);
                                         });
                                       },
-                                      fn1: () {},
+                                      onTap: () {},
                                     ),
                                     Container(
                                       margin: const EdgeInsets.only(
@@ -446,7 +446,7 @@ class _SignUpState extends State<SignUp> {
                                       child: CustomView.editTextField(
                                           controller: fatherNameController,
                                           key: ValueKey('fatherName'),
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               fatherName = input.toString();
                                               print(fatherName);
@@ -473,7 +473,7 @@ class _SignUpState extends State<SignUp> {
                                       child: CustomView.editTextField(
                                           controller: addressController,
                                           key: ValueKey('address1'),
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               address1 = input.toString();
                                               print('$address1');
@@ -500,7 +500,7 @@ class _SignUpState extends State<SignUp> {
                                       child: CustomView.editTextField(
                                           controller: villageController,
                                           key: ValueKey('village'),
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               village = input.toString();
                                               print('$village');
@@ -527,7 +527,7 @@ class _SignUpState extends State<SignUp> {
                                       child: CustomView.editTextField(
                                           controller: postOfficeController,
                                           key: ValueKey('postOffice'),
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               postOffice = input.toString();
                                               print('$postOffice');
@@ -554,7 +554,7 @@ class _SignUpState extends State<SignUp> {
                                       child: CustomView.editTextField(
                                           controller: thanaController,
                                           key: ValueKey('thana'),
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               thana = input.toString();
                                               print('$thana');
@@ -588,7 +588,7 @@ class _SignUpState extends State<SignUp> {
                                           print(country);
                                         });
                                       },
-                                      fn1: () {},
+                                      onTap: () {},
                                     ),
                                     Container(
                                       margin: const EdgeInsets.only(
@@ -666,7 +666,7 @@ class _SignUpState extends State<SignUp> {
                                             }
                                           }
                                         },
-                                        fn1: () async {}),
+                                        onTap: () async {}),
                                     Container(
                                       margin: const EdgeInsets.only(
                                           top: 20, left: 20),
@@ -708,7 +708,7 @@ class _SignUpState extends State<SignUp> {
                                           // }
                                         });
                                       },
-                                      fn1: () async {},
+                                      onTap: () async {},
                                     ),
                                     Container(
                                       margin: const EdgeInsets.only(
@@ -727,7 +727,7 @@ class _SignUpState extends State<SignUp> {
                                           controller: pincodeController,
                                           key: ValueKey('pincode'),
                                           maxLength: 6,
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               pincode = input.toString();
                                               print(pincode);
@@ -754,7 +754,7 @@ class _SignUpState extends State<SignUp> {
                                       child: CustomView.editTextField(
                                           controller: occupationController,
                                           key: ValueKey('occupation'),
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               occupation = input.toString();
                                               print('$occupation');
@@ -784,7 +784,7 @@ class _SignUpState extends State<SignUp> {
                                             print(identity);
                                           });
                                         },
-                                        fn1: () {},
+                                        onTap: () {},
                                         context: context,
                                         inputValue: identity,
                                         list: identityList,
@@ -853,7 +853,7 @@ class _SignUpState extends State<SignUp> {
                                           controller: mobileController,
                                           key: ValueKey('mobile'),
                                           maxLength: 10,
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               mobile = input.toString();
                                               print(mobile);
@@ -879,7 +879,7 @@ class _SignUpState extends State<SignUp> {
                                       margin: const EdgeInsets.only(top: 20),
                                       child: CustomView.editTextField(
                                           key: ValueKey('otp'),
-                                          fn: (input) {
+                                          onChanged: (input) {
                                             setState(() {
                                               otpData = input.toString();
                                               print('$otpData');

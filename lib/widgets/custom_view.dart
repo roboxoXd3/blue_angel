@@ -306,7 +306,7 @@ class CustomView {
       int maxLines,
       double size,
       int lengthLimiting,
-      Function fn,
+      Function onChanged,
       Function validator,
       ValueKey key,
       String prefilledText}) {
@@ -335,7 +335,7 @@ class CustomView {
         ],
         maxLines: maxLines,
         maxLength: maxLength,
-        onChanged: fn,
+        onChanged: onChanged,
         decoration: InputDecoration(
             isDense: true,
             labelText: labelText,
@@ -681,7 +681,7 @@ class CustomView {
     List<String> list,
     String text,
     Function onchanged,
-    Function fn1,
+    Function onTap,
     ValueKey key,
   }) {
     return Container(
@@ -728,7 +728,7 @@ class CustomView {
           onChanged: onchanged,
           items: list.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
-              onTap: fn1,
+              onTap: onTap,
               
               value: value,
               child: Container(

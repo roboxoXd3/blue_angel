@@ -398,7 +398,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         keyborad: TextInputType.text,
                                         // labelText: 'NAME',
                                         lengthLimiting: 20,
-                                        fn: (input) {
+                                        onChanged: (input) {
                                           setState(() {
                                             fullName = input;
                                             inputDoc["fullName"] = fullName;
@@ -425,7 +425,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         keyborad: TextInputType.text,
                                         // labelText: 'LAST NAME',
                                         lengthLimiting: 20,
-                                        fn: (input) {
+                                        onChanged: (input) {
                                           setState(() {
                                             address = input;
                                             inputDoc["address"] = address;
@@ -452,7 +452,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         keyborad: TextInputType.text,
                                         // labelText: 'NAME',
                                         lengthLimiting: 20,
-                                        fn: (input) {
+                                        onChanged: (input) {
                                           setState(() {
                                             village = input;
                                             inputDoc["village"] = village;
@@ -479,7 +479,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         keyborad: TextInputType.text,
                                         // labelText: 'NAME',
                                         lengthLimiting: 20,
-                                        fn: (input) {
+                                        onChanged: (input) {
                                           setState(() {
                                             postOffice = input;
                                             inputDoc["post_office"] =
@@ -507,7 +507,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         keyborad: TextInputType.text,
                                         // labelText: 'NAME',
                                         lengthLimiting: 20,
-                                        fn: (input) {
+                                        onChanged: (input) {
                                           setState(() {
                                             thana = input;
                                             inputDoc["thana"] = thana;
@@ -538,7 +538,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         print(inputDoc);
                                       });
                                     },
-                                    fn1: () {},
+                                    onTap: () {},
                                   ),
                                   Container(
                                     margin: const EdgeInsets.only(
@@ -623,7 +623,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                           }
                                         }
                                       },
-                                      fn1: () async {
+                                      onTap: () async {
                                         // districtList.remove();
                                       }),
                                   Container(
@@ -665,7 +665,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         // }
                                       });
                                     },
-                                    fn1: () async {},
+                                    onTap: () async {},
                                   ),
                                   Container(
                                     margin: const EdgeInsets.only(
@@ -687,7 +687,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         keyborad: TextInputType.number,
                                         // labelText: 'NAME',
                                         lengthLimiting: 20,
-                                        fn: (input) {
+                                        onChanged: (input) {
                                           setState(() {
                                             pincode = input.toString();
                                             inputDoc["pincode"] = pincode;
@@ -731,7 +731,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         keyborad: TextInputType.number,
                                         // labelText: 'NAME',
                                         lengthLimiting: 20,
-                                        fn: (input) {
+                                        onChanged: (input) {
                                           setState(() {
                                             mobileNumber = input.toString();
                                             inputDoc["mobile_Number"] =

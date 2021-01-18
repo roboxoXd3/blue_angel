@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 }
                                                 return null;
                                               },
-                                              fn: (input) {
+                                              onChanged: (input) {
                                                 setState(() {
                                                   mobilenumber =
                                                       input.toString();
@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           margin:
                                               const EdgeInsets.only(top: 20),
                                           child: CustomView.editTextField(
-                                            fn: (input) {
+                                            onChanged: (input) {
                                               otp = input.toString();
                                             },
 

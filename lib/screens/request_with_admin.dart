@@ -151,7 +151,7 @@ class _RequestWithAdminState extends State<RequestWithAdmin> {
                                       height: 100,
                                       maxLines: 5,
                                       lengthLimiting: 140,
-                                      fn: (input) {
+                                      onChanged: (input) {
                                         setState(() {
                                           content = input;
                                         });

@@ -252,7 +252,7 @@ class _EditProfileState extends State<EditProfile> {
                                       // prefilledText: "First name",
                                       labelText: firstName,
                                       controller: firstNameController,
-                                      fn: (input) {
+                                      onChanged: (input) {
                                         setState(() {
                                           firstName = input;
                                           // CustomView.firstName = input;
@@ -281,7 +281,7 @@ class _EditProfileState extends State<EditProfile> {
                                       // prefilledText:
                                       //     CustomView.lastName.toUpperCase(),
                                       controller: lasttNameController,
-                                      fn: (input) {
+                                      onChanged: (input) {
                                         setState(() {
                                           lastName = input;
                                           // CustomView.lastName = input;
