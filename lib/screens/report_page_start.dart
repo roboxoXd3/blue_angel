@@ -1,6 +1,7 @@
 import 'package:blue_angel/models/bannerResponse.dart';
 import 'package:blue_angel/models/surveyReportResponse.dart';
 import 'package:blue_angel/network/api_call.dart';
+import 'package:blue_angel/network/api_constants.dart';
 import 'package:blue_angel/screens/report_page.dart';
 import 'package:blue_angel/utlis/values/styles.dart';
 import 'package:blue_angel/widgets/custom_view.dart';
@@ -8,7 +9,8 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 class ReportPageStart extends StatefulWidget {
   final String surveyId;
   final BannerResponse bannerResponse;
@@ -26,19 +28,24 @@ class _ReportPageStartState extends State<ReportPageStart> {
   int top_nav;
   String startDate, lastDate;
   bool isLoading = true;
-
-  final format = DateFormat("dd/MM/yyyy");
-  String accessToken;
-  getDataFromSharedPrefs() async {
+  String user_id = '';
+  String token = '';
+  final format = DateFormat("dd/MM/yyy");
+  // String accessToken;
+  Future<Map<String, String>> getDataFromSharedPreference() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      accessToken = sharedPreferences.getString("access_token");
-    });
+    // setState(() {
+    user_id= sharedPreferences.getString("user_id");
+    token = sharedPreferences.getString("accessToken");
+
+    print("Body is :" + user_id);
+    print("Header is: " + token);
+    return {'body': user_id, 'header': token};
   }
 
   @override
   void initState() {
-    getDataFromSharedPrefs();
+    // getDataFromSharedPrefs();
     print("Survey id is: " + widget.surveyId);
     String ss = widget.bannerResponse.data.top_nav;
     String s = "0xff" + ss.substring(1);
@@ -46,6 +53,35 @@ class _ReportPageStartState extends State<ReportPageStart> {
     print("top_nav" + s);
     super.initState();
   }
+  //  Future<SurveyReportResponse> fetchtSurveyReport({
+  //   @required String startDate,
+  //   @required String endDate,
+  //
+  //   @required userId,
+  //   @required token
+  //
+  // }) async {
+  //   final response = await http.post(
+  //     Uri.encodeFull(AppConstants.surveyReport),
+  //     headers: {
+  //       "accept": "application/json",
+  //       "authorization": "$token",
+  //     },
+  //     body: json.encode({
+  //       "start_date": startDate,
+  //       "end_date": endDate,
+  //       "blu_angel": userId,
+  //       "survey_id": widget.surveyId,
+  //     }),
+  //   );
+  //   if (response.statusCode == 200) {
+  //     print("Inside survey report");
+  //     final String responseString = response.body;
+  //     return surveyReportResponseFromJson(responseString);
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -270,13 +306,13 @@ class _ReportPageStartState extends State<ReportPageStart> {
                                     setState(() {
                                       isLoading = !isLoading;
                                     });
-                                    final SurveyReportResponse
-                                        surveyReportResponse =
-                                        await ApiCall.getSurveyReport(
-                                      startDate: startDate,
-                                      endDate: lastDate,
-                                      surveyId: widget.surveyId,
-                                    );
+                                    // final SurveyReportResponse
+                                    //     surveyReportResponse =
+                                    //     await ApiCall.getSurveyReport(
+                                    //   startDate: startDate,
+                                    //   endDate: lastDate,
+                                    //   surveyId: widget.surveyId,
+                                    // );
                                     if (startDate == null) {
                                       CustomView.showInDialog(context, "Error",
                                           "Start Date is Empty!", () {
@@ -293,27 +329,45 @@ class _ReportPageStartState extends State<ReportPageStart> {
                                           isLoading = !isLoading;
                                         });
                                       });
-                                    } else if (surveyReportResponse.status ==
-                                        "success") {
-                                      SharedPreferences sharedPreferences =
-                                          await SharedPreferences.getInstance();
-                                      sharedPreferences.setString("accessToken",
-                                          surveyReportResponse.token);
-                                      setState(() {
-                                        ApiCall.token =
-                                            surveyReportResponse.token;
-                                        isLoading = !isLoading;
-                                      });
-                                      print(surveyReportResponse.status);
+                                    }
+                                    // else if (surveyReportResponse.status ==
+                                    //     "success") {
+                                    //   SharedPreferences sharedPreferences =
+                                    //       await SharedPreferences.getInstance();
+                                    //   sharedPreferences.setString("accessToken",
+                                    //       surveyReportResponse.token);
+                                    //   setState(() {
+                                    //     ApiCall.token =
+                                    //         surveyReportResponse.token;
+                                    //     isLoading = !isLoading;
+                                    //   });
+                                    //   // print(surveyReportResponse.status);
+                                    //   Navigator.of(context).push(
+                                    //     MaterialPageRoute(
+                                    //       builder: (context) => ReportPage(
+                                    //         completeOrReport:
+                                    //             widget.changeReport
+                                    //                 ? true
+                                    //                 : false,
+                                    //         surveyReportResponse:
+                                    //             surveyReportResponse,
+                                    //       ),
+                                    //     ),
+                                    //   );
+                                    // }
+                                    else{
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) => ReportPage(
                                             completeOrReport:
-                                                widget.changeReport
-                                                    ? true
-                                                    : false,
-                                            surveyReportResponse:
-                                                surveyReportResponse,
+                                            widget.changeReport
+                                                ? true
+                                                : false,
+                                            surveyId: widget.surveyId,
+                                            startdate: startDate,
+                                            enddate: lastDate,
+                                            // surveyReportResponse:
+                                            // surveyReportResponse,
                                           ),
                                         ),
                                       );

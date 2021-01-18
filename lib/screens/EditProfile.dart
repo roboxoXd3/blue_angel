@@ -308,7 +308,7 @@ class _EditProfileState extends State<EditProfile> {
                                     context: context,
                                     inputValue: gender,
                                     list: genderList,
-                                    fn: (input) {
+                                    onchanged: (input) {
                                       setState(() {
                                         gender = input.toString();
                                         // CustomView.gender = input.toString();

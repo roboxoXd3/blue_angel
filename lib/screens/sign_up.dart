@@ -351,7 +351,7 @@ class _SignUpState extends State<SignUp> {
                                       inputValue: gender,
                                       list: genderList,
                                       text: 'Select gender',
-                                      fn: (String newValue) {
+                                      onchanged: (String newValue) {
                                         setState(() {
                                           gender = newValue.toString();
                                           print(gender);
@@ -582,7 +582,7 @@ class _SignUpState extends State<SignUp> {
                                       inputValue: country,
                                       list: countryList,
                                       text: 'Select country',
-                                      fn: (String newValue) {
+                                      onchanged: (String newValue) {
                                         setState(() {
                                           country = newValue;
                                           print(country);
@@ -612,7 +612,7 @@ class _SignUpState extends State<SignUp> {
                                         //     ? ['State']
                                         //     : widget.stateListResponse.data,
                                         text: 'Select state',
-                                        fn: (String newValue) async {
+                                        onchanged: (String newValue) async {
                                           setState(() {
                                             state = newValue;
                                             print(state);
@@ -687,7 +687,7 @@ class _SignUpState extends State<SignUp> {
                                               ? ['Please Select State First']
                                               : districtList.toSet().toList(),
                                       text: 'Select district',
-                                      fn: (String newValue) {
+                                      onchanged: (String newValue) {
                                         setState(() {
                                           district = newValue;
                                           print(district);
@@ -778,7 +778,7 @@ class _SignUpState extends State<SignUp> {
                                     ),
                                     CustomView.buildDropDown(
                                         key: ValueKey('identity'),
-                                        fn: (String newValue) {
+                                        onchanged: (String newValue) {
                                           setState(() {
                                             identity = newValue;
                                             print(identity);

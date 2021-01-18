@@ -1,5 +1,7 @@
 // import 'dart:collection';
-//
+// import 'package:blue_angel/network/api_constants.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
 // import 'package:blue_angel/models/Survey/submitSurvey.dart';
 // import 'package:blue_angel/models/bannerResponse.dart';
 // import 'package:blue_angel/models/surveyListResponse.dart';
@@ -27,6 +29,7 @@
 //   final String lat;
 //   final String image;
 //   final String token;
+//   final String userId;
 //
 //   const DynamicSurveyForm({
 //     Key key,
@@ -39,7 +42,8 @@
 //     @required this.lng,
 //     @required this.lat,
 //     @required this.image,
-//     @required this.token
+//     @required this.token,
+//     @required this.userId,
 //   }) : super(key: key);
 //   @override
 //   _DynamicSurveyFormState createState() => _DynamicSurveyFormState();
@@ -50,7 +54,7 @@
 //   List<String> selectedItemValue = List<String>();
 //   int top_nav;
 //   // List _selecteCheckbox = List();
-//   List _surveyForm;
+//   // List _surveyForm = [];
 //   String valueSelected;
 //   final format = DateFormat("yyyy-MM-dd");
 //
@@ -95,40 +99,49 @@
 //   String img64;
 //   Map<String, dynamic> createDoc = new HashMap();
 //   String accessToken = ' ';
-//   String userId= ' ';
-//   getDataFromSharedPrefs() async {
-//     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//     setState(() {
-//       accessToken = sharedPreferences.getString("access_token");
-//       userId = sharedPreferences.get("user_id");
-//     });
+//   // String userId= ' ';
+//
+//   Future<SurveyListResponse> fetchSurveyList(
+//       {String blueAngel, accessToken}) async {
+//     SurveyListResponse supervisorModel = SurveyListResponse();
+//     var response = await http.post(Uri.encodeFull(AppConstants.surveyList),
+//         body: json.encode({"blu_angel": blueAngel}),
+//         headers: {"authorization": accessToken});
+//     print(response.body);
+//     if (response.statusCode == 200) {
+//       return SurveyListResponse.fromJson(json.decode(response.body));
+//       // getSupervisorModel = json.decode(response.body);
+//     } else {
+//       print("There is an error");
+//     }
+//     return supervisorModel;
 //   }
 //
-//   List<String> newValues;
+//   List<String> newValues = new List<String>();
 //   bool isLoading = true;
 //   @override
 //   void initState() {
-//     getDataFromSharedPrefs();
-//     boolValue = false;
-//     newValues = new List<String>();
-//     print("Static data are: "+ widget.inputDoc.toString());
-//     for(int i =0;i< widget.inputDoc.length; i++)
-//       {
-//         ValueForkeys.add(widget.inputDoc.values.elementAt(i));
-//       }
-//     for(int i =0;i<ValueForkeys.length;i++)
-//       {
-//         print(''' $i is ${ValueForkeys[i]} ''');
-//       }
-//     print("Survey id is: " +widget.surveyId);
-//     print("Token is: " +widget.token);
-//     _surveyForm = widget.surveyForm;
-//     print(_surveyForm.length);
-//     for (int i = 0; i < _surveyForm.length; i++) {
-//       print(_surveyForm[i].filedValue);
-//       newValues.add("");
-//       print(_surveyForm);
-//     }
+//     // getDataFromSharedPrefs();
+//     // boolValue = false;
+//     // newValues = new List<String>();
+//     // print("Static data are: "+ widget.inputDoc.toString());
+//     // for(int i =0;i< widget.inputDoc.length; i++)
+//     //   {
+//     //     ValueForkeys.add(widget.inputDoc.values.elementAt(i));
+//     //   }
+//     // for(int i =0;i<ValueForkeys.length;i++)
+//     //   {
+//     //     print(''' $i is ${ValueForkeys[i]} ''');
+//     //   }
+//     // print("Survey id is: " +widget.surveyId);
+//     // // print("Token is: " +widget.token);
+//     // _surveyForm = widget.surveyForm;
+//     // print("Survey from length is: "+_surveyForm.length.toString());
+//     // for (int i = 0; i < _surveyForm.length; i++) {
+//     //   print("filed values are for ${_surveyForm[i].filedName}: "+_surveyForm[i].filedValue);
+//     //   newValues.add("");
+//     //   // print(_surveyForm);
+//     // }
 //
 //     countryList = <String>['INDIA'];
 //     String ss = widget.bannerResponse.data.top_nav;
@@ -140,8 +153,8 @@
 //
 //   @override
 //   Widget build(BuildContext context) {
-//     print('surveyList len => ' + _surveyForm.length.toString());
-//     print("User id is: " + userId);
+//     print('surveyList len => ' + widget.surveyForm.length.toString());
+//     print("User id is: " + widget.userId);
 //     return IgnorePointer(
 //       ignoring: !isLoading,
 //       child: Scaffold(
@@ -191,25 +204,34 @@
 //                               bottom: 50,
 //                             ),
 //                             child: ListView.builder(
-//                               itemCount: _surveyForm.length,
+//                               itemCount: widget.surveyForm.length,
 //                               itemBuilder: (context, index) {
 //                                 // ignore: missing_return
 //
 //                                 print('in builder');
-//                                 String name = _surveyForm[index].filedName;
+//                                 String name = widget.surveyForm[index].filedName;
+//                                 print("Name is: $name");
 //
 //                                 print('in filedName');
-//                                 List<String> comma =
-//                                     _surveyForm[index].filedValue.split(",");
-//                                 if (newValues[index].isEmpty)
-//                                   newValues[index] = comma[0];
-//                                 String type = _surveyForm[index].filedType;
-//                                 print('in filedType');
-//                                 var require = _surveyForm[index].filedRequired;
-//                                 print('in filedRequired');
-//                                 String fv = _surveyForm[index].filedValue;
-//                                 print('in filedValue');
+//                                 var require = widget.surveyForm[index].filedRequired;
+//                                 print('in filedRequired $require');
+//                                 String fv = widget.surveyForm[index].filedValue;
+//                                 print('in filedValue $fv');
 //                                 print('in formValuesComma');
+//                                 List<String> comma = new List<String>();
+//                                 if(fv.isNotEmpty)
+//                                   {
+//                                     print("Inside comma");
+//                                    comma =
+//                                     widget.surveyForm[index].filedValue.split(",");
+//                                     if (newValues[index].isEmpty) {
+//                                     newValues[index] = comma[0];
+//                                   }
+//                                     print("comma $comma");
+//                                 }
+//                                 String type = widget.surveyForm[index].filedType;
+//                                 print('in filedType $type');
+//
 //                                 print(
 //                                     'comma len => ' + comma.length.toString());
 //                                 bool isNotNull = true;
@@ -228,32 +250,32 @@
 //                                         mainAxisAlignment: MainAxisAlignment.start,
 //                                         children: [
 //                                           require.toString().toLowerCase() ==
-//                                                   "no"
+//                                               "no"
 //                                               ? Container(
-//                                                   margin: const EdgeInsets.only(
-//                                                       top: 20, left: 20),
-//                                                   child: Text(
-//                                                     '$name(Optional) :'.toUpperCase(),
-//                                                     style: kheadingStyle.apply(
-//                                                       fontSizeFactor: 1.2,
-//                                                       fontWeightDelta: 5,
-//                                                     ),
-//                                                   ),
-//                                                 )
+//                                             margin: const EdgeInsets.only(
+//                                                 top: 20, left: 20),
+//                                             child: Text(
+//                                               '$name(Optional) :'.toUpperCase(),
+//                                               style: kheadingStyle.apply(
+//                                                 fontSizeFactor: 1.2,
+//                                                 fontWeightDelta: 5,
+//                                               ),
+//                                             ),
+//                                           )
 //                                               : Container(
-//                                                   margin: const EdgeInsets.only(
-//                                                       top: 20, left: 20),
-//                                                   child: Text(
-//                                                     '$name :'.toUpperCase(),
-//                                                     style: kheadingStyle.apply(
-//                                                       fontSizeFactor: 1.2,
-//                                                       fontWeightDelta: 5,
-//                                                     ),
-//                                                   ),
-//                                                 ),
+//                                             margin: const EdgeInsets.only(
+//                                                 top: 20, left: 20),
+//                                             child: Text(
+//                                               '$name :'.toUpperCase(),
+//                                               style: kheadingStyle.apply(
+//                                                 fontSizeFactor: 1.2,
+//                                                 fontWeightDelta: 5,
+//                                               ),
+//                                             ),
+//                                           ),
 //                                           for (int i = 0; i < comma.length; i++)
-//                                             // inputs.add(true),
-//                                             // ignore: missing_return
+//                                           // inputs.add(true),
+//                                           // ignore: missing_return
 //                                             Container(
 //                                               margin: const EdgeInsets.only(
 //                                                 top: 8,
@@ -262,12 +284,12 @@
 //                                                 comma[i],
 //                                                 checkList[i],
 //                                                 // values[i.toString()],
-//                                                 (value) {
+//                                                     (value) {
 //                                                   updateState(() {
 //                                                     checkList[i] = value;
 //                                                     print(checkList[i]);
 //                                                     createDoc["$name"] =
-//                                                         checkList[i];
+//                                                     checkList[i];
 //                                                     print(createDoc);
 //                                                   });
 //                                                 },
@@ -278,78 +300,80 @@
 //                                     },
 //                                   );
 //                                   // ignore: missing_return
-//                                 } else if (type.toLowerCase() == "radio box") {
+//                                 }
+//                                 else if (type.toLowerCase() == "radio box") {
 //                                   return StatefulBuilder(
 //                                       builder: (con, updateState) {
-//                                     return Column(
-//                                       mainAxisAlignment:
+//                                         return Column(
+//                                           mainAxisAlignment:
 //                                           MainAxisAlignment.start,
-//                                       crossAxisAlignment:
+//                                           crossAxisAlignment:
 //                                           CrossAxisAlignment.start,
-//                                       children: [
-//                                         require.toString().toLowerCase() == "no"
-//                                             ? Container(
-//                                                 margin: const EdgeInsets.only(
-//                                                     top: 20, left: 20),
-//                                                 child: Text(
-//                                                   '$name(Optional) :',
-//                                                   style: kheadingStyle.apply(
-//                                                     fontSizeFactor: 1.2,
-//                                                     fontWeightDelta: 5,
-//                                                   ),
-//                                                 ),
-//                                               )
-//                                             : Container(
-//                                                 margin: const EdgeInsets.only(
-//                                                     top: 20, left: 20),
-//                                                 child: Text(
-//                                                   '$name :',
-//                                                   style: kheadingStyle.apply(
-//                                                     fontSizeFactor: 1.2,
-//                                                     fontWeightDelta: 5,
-//                                                   ),
+//                                           children: [
+//                                             require.toString().toLowerCase() == "no"
+//                                                 ? Container(
+//                                               margin: const EdgeInsets.only(
+//                                                   top: 20, left: 20),
+//                                               child: Text(
+//                                                 '$name(Optional) :',
+//                                                 style: kheadingStyle.apply(
+//                                                   fontSizeFactor: 1.2,
+//                                                   fontWeightDelta: 5,
 //                                                 ),
 //                                               ),
-//                                         for (int i = 0; i < comma.length; i++)
-//                                           Container(
-//                                             margin:
+//                                             )
+//                                                 : Container(
+//                                               margin: const EdgeInsets.only(
+//                                                   top: 20, left: 20),
+//                                               child: Text(
+//                                                 '$name :',
+//                                                 style: kheadingStyle.apply(
+//                                                   fontSizeFactor: 1.2,
+//                                                   fontWeightDelta: 5,
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                             for (int i = 0; i < comma.length; i++)
+//                                               Container(
+//                                                 margin:
 //                                                 // ignore: missing_return
 //                                                 const EdgeInsets.only(
 //                                                     top: 20, left: 20),
-//                                             child: Row(
-//                                               children: <Widget>[
-//                                                 Radio(
-//                                                   activeColor: Colors.green,
-//                                                   toggleable: false,
-//                                                   onChanged: (int fn) {
-//                                                     updateState(() {
-//                                                       _value2 = fn;
+//                                                 child: Row(
+//                                                   children: <Widget>[
+//                                                     Radio(
+//                                                       activeColor: Colors.green,
+//                                                       toggleable: false,
+//                                                       onChanged: (int fn) {
+//                                                         updateState(() {
+//                                                           _value2 = fn;
 //
-//                                                       createDoc["$name"] =
+//                                                           createDoc["$name"] =
 //                                                           comma[i];
-//                                                       print(createDoc);
-//                                                     });
-//                                                   },
-//                                                   groupValue: _value2,
-//                                                   value: i,
+//                                                           print(createDoc);
+//                                                         });
+//                                                       },
+//                                                       groupValue: _value2,
+//                                                       value: i,
+//                                                     ),
+//                                                     Text(
+//                                                       comma[i],
+//                                                       style: kheadingStyle.apply(
+//                                                         fontSizeFactor: 1.2,
+//                                                         fontWeightDelta: 5,
+//                                                       ),
+//                                                     ),
+//                                                     // Text(comma[i]),
+//                                                   ],
 //                                                 ),
-//                                                 Text(
-//                                                   comma[i],
-//                                                   style: kheadingStyle.apply(
-//                                                     fontSizeFactor: 1.2,
-//                                                     fontWeightDelta: 5,
-//                                                   ),
-//                                                 ),
-//                                                 // Text(comma[i]),
-//                                               ],
-//                                             ),
-//                                           ),
-//                                       ],
-//                                     );
-//                                   });
+//                                               ),
+//                                           ],
+//                                         );
+//                                       });
 //                                   // }
 //                                   // ignore: missing_return
-//                                 } else if (type.toLowerCase() == "select box") {
+//                                 }
+//                                 else if (type.toLowerCase() == "select box") {
 //                                   for (int i = 0; i < comma.length; i++) {
 //                                     // ignore: missing_return
 //                                     selectedItemValue.add(comma[i]);
@@ -357,76 +381,77 @@
 //                                   print('comma list => ' + comma.toString());
 //                                   return StatefulBuilder(
 //                                       builder: (con, updateState) {
-//                                     return Padding(
-//                                       padding: const EdgeInsets.symmetric(
-//                                           horizontal: 10.0),
-//                                       child: Column(
-//                                         crossAxisAlignment:
+//                                         return Padding(
+//                                           padding: const EdgeInsets.symmetric(
+//                                               horizontal: 10.0),
+//                                           child: Column(
+//                                             crossAxisAlignment:
 //                                             CrossAxisAlignment.start,
-//                                         children: [
-//                                           Container(
-//                                             child: Text(
-//                                               _surveyForm[index].filedName,
-//                                               style: kheadingStyle.apply(
-//                                                 fontSizeFactor: 1.2,
-//                                                 fontWeightDelta: 5,
+//                                             children: [
+//                                               Container(
+//                                                 child: Text(
+//                                                   widget.surveyForm[index].filedName,
+//                                                   style: kheadingStyle.apply(
+//                                                     fontSizeFactor: 1.2,
+//                                                     fontWeightDelta: 5,
+//                                                   ),
+//                                                 ),
 //                                               ),
-//                                             ),
+//                                               CustomView.buildDropDown(
+//                                                 context: context,
+//                                                 key: ValueKey('${newValue}'),
+//                                                 inputValue: newValue,
+//                                                 list: comma,
+//                                                 fn: (value) {
+//                                                   updateState(() {
+//                                                     newValues[index] = value;
+//                                                     createDoc[name] =
+//                                                         newValues[index].toString();
+//                                                     print(createDoc[name]);
+//                                                   });
+//                                                 },
+//                                                 text: newValues[index],
+//                                               ),
+//                                             ],
 //                                           ),
-//                                           CustomView.buildDropDown(
-//                                             context: context,
-//                                             key: ValueKey('${newValue}'),
-//                                             inputValue: newValue,
-//                                             list: comma,
-//                                             fn: (value) {
-//                                               updateState(() {
-//                                                 newValues[index] = value;
-//                                                 createDoc[name] =
-//                                                     newValues[index].toString();
-//                                                 print(createDoc[name]);
-//                                               });
-//                                             },
-//                                             text: newValues[index],
-//                                           ),
-//                                         ],
-//                                       ),
-//                                     );
-//                                   });
-//                                 } else if (type.toLowerCase() == "text box") {
+//                                         );
+//                                       });
+//                                 }
+//                                 else if (type.toLowerCase() == "text box") {
 //                                   // createDoc[name] = fv.toString();
 //                                   return StatefulBuilder(
 //                                     builder: (c, updateState) {
 //                                       return Column(
 //                                         crossAxisAlignment:
-//                                             CrossAxisAlignment.start,
+//                                         CrossAxisAlignment.start,
 //                                         mainAxisAlignment:
-//                                             MainAxisAlignment.start,
+//                                         MainAxisAlignment.start,
 //                                         children: [
 //                                           require.toString().toLowerCase() ==
-//                                                   "no"
+//                                               "no"
 //                                               ? Container(
-//                                                   margin: const EdgeInsets.only(
-//                                                       top: 20, left: 20),
-//                                                   child: Text(
-//                                                     '$name(Optional) :',
-//                                                     style: kheadingStyle.apply(
-//                                                       fontSizeFactor: 1.2,
-//                                                       fontWeightDelta: 5,
-//                                                     ),
-//                                                   ),
-//                                                 )
+//                                             margin: const EdgeInsets.only(
+//                                                 top: 20, left: 20),
+//                                             child: Text(
+//                                               '$name(Optional) :',
+//                                               style: kheadingStyle.apply(
+//                                                 fontSizeFactor: 1.2,
+//                                                 fontWeightDelta: 5,
+//                                               ),
+//                                             ),
+//                                           )
 //                                               : Container(
-//                                                   margin: const EdgeInsets.only(
-//                                                       top: 20, left: 20),
-//                                                   child: Text(
-//                                                     '$name :',
-//                                                     style: kheadingStyle.apply(
-//                                                       fontWeightDelta: 3,
-//                                                       fontSizeFactor: 1.2,
-//                                                     ),
-//                                                     softWrap: true,
-//                                                   ),
-//                                                 ),
+//                                             margin: const EdgeInsets.only(
+//                                                 top: 20, left: 20),
+//                                             child: Text(
+//                                               '$name :',
+//                                               style: kheadingStyle.apply(
+//                                                 fontWeightDelta: 3,
+//                                                 fontSizeFactor: 1.2,
+//                                               ),
+//                                               softWrap: true,
+//                                             ),
+//                                           ),
 //                                           Container(
 //                                             margin: const EdgeInsets.only(
 //                                               top: 20,
@@ -463,35 +488,35 @@
 //                                     builder: (c, updateState) {
 //                                       return Column(
 //                                         crossAxisAlignment:
-//                                             CrossAxisAlignment.start,
+//                                         CrossAxisAlignment.start,
 //                                         mainAxisAlignment:
-//                                             MainAxisAlignment.start,
+//                                         MainAxisAlignment.start,
 //                                         children: [
 //                                           require.toString().toLowerCase() ==
-//                                                   "no"
+//                                               "no"
 //                                               ? Container(
-//                                                   margin: const EdgeInsets.only(
-//                                                       top: 20, left: 20),
-//                                                   child: Text(
-//                                                     '$name (Optional)',
-//                                                     style: kheadingStyle.apply(
-//                                                       fontWeightDelta: 3,
-//                                                       fontSizeFactor: 1.2,
-//                                                     ),
-//                                                   ),
-//                                                 )
+//                                             margin: const EdgeInsets.only(
+//                                                 top: 20, left: 20),
+//                                             child: Text(
+//                                               '$name (Optional)',
+//                                               style: kheadingStyle.apply(
+//                                                 fontWeightDelta: 3,
+//                                                 fontSizeFactor: 1.2,
+//                                               ),
+//                                             ),
+//                                           )
 //                                               : Container(
-//                                                   margin: const EdgeInsets.only(
-//                                                       top: 20, left: 20),
-//                                                   child: Text(
-//                                                     '$name :',
-//                                                     style: kheadingStyle.apply(
-//                                                       fontWeightDelta: 3,
-//                                                       fontSizeFactor: 1.2,
-//                                                     ),
-//                                                     softWrap: true,
-//                                                   ),
-//                                                 ),
+//                                             margin: const EdgeInsets.only(
+//                                                 top: 20, left: 20),
+//                                             child: Text(
+//                                               '$name :',
+//                                               style: kheadingStyle.apply(
+//                                                 fontWeightDelta: 3,
+//                                                 fontSizeFactor: 1.2,
+//                                               ),
+//                                               softWrap: true,
+//                                             ),
+//                                           ),
 //                                           Container(
 //                                             margin: const EdgeInsets.only(
 //                                               top: 20,
@@ -603,8 +628,8 @@
 //                             //
 //                             //   final SurveyListResponse surveyListResponse =
 //                             //       await ApiCall.getSurveyList();
-//                               final BannerResponse bannerResponse =
-//                                   await ApiCall.getBanner();
+//                             final BannerResponse bannerResponse =
+//                             await ApiCall.getBanner();
 //                             //   if (surveyListResponse.status == "success" &&
 //                             //       bannerResponse.status == "success") {
 //                             //     setState(() {
@@ -624,7 +649,7 @@
 //                             //                       surveyListResponse,
 //                             //                 )),
 //                             //       );
-//                                 // });
+//                             // });
 //                             //   }
 //                             // } else if (submitResponse.status == null) {
 //                             //   print('null');
@@ -666,13 +691,13 @@
 //                             // );
 //
 //                             submitSurevy(
-//                               token: accessToken,
+//                               // context,
+//                               // token: accessToken,
 //                               surveyid: widget.surveyId,
-//                               // productid: _surveyFo,
-//                               productid: "5f46814711bfc11e2ce29071",
-//                               userid: userId,
-//                               qntity: "10",
-//                               full_name: widget.inputDoc["full_name"],
+//                               product: widget.inputDoc["Product"],
+//
+//                               qntity: widget.inputDoc["qty"],
+//                               full_name: widget.inputDoc["fullName"],
 //                               address: widget.inputDoc["address"],
 //                               village: widget.inputDoc["village"],
 //                               postOffice: widget.inputDoc["post_office"],
@@ -680,14 +705,14 @@
 //                               country: widget.inputDoc["country"],
 //                               district: widget.inputDoc["district"],
 //                               state: widget.inputDoc["state"],
-//                               mobile: widget.inputDoc["mobile"],
+//                               mobile: widget.inputDoc["mobile_Number"],
 //                               pincode: widget.inputDoc["pincode"],
-//                               formData: {"Gender":"Male", "Color": "Red"},
+//                               formData: createDoc,
 //                               image: widget.image,
 //                               lal: widget.lat,
 //                               long: widget.lng,
 //                               // gender: widget.inputDoc["gender"],
-//                             ).then((value) {
+//                             )..then((value) {
 //                               if (value.status == 'success') {
 //                                 setState(() {
 //                                   Navigator.of(_keyLoader.currentContext,
@@ -762,6 +787,7 @@ import 'package:toast/toast.dart';
 class DynamicSurveyForm extends StatefulWidget {
   final List surveyForm;
   final String surveyName;
+    final BannerResponse bannerResponse;
   final Map<String, Object> inputDoc;
   final String surveyId;
 
@@ -779,7 +805,7 @@ class DynamicSurveyForm extends StatefulWidget {
     // @required this.productList,
     @required this.lng,
     @required this.lat,
-    @required this.image,
+    @required this.image, this.bannerResponse,
   }) : super(key: key);
 
   @override
@@ -789,9 +815,15 @@ class DynamicSurveyForm extends StatefulWidget {
 class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
   List<String> selectedItemValue = List<String>();
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  TextEditingController textController = TextEditingController();
+  List<TextEditingController> _controllers = new List();
   final _formKey = GlobalKey<FormState>();
 
+  // void dispose() {
+  //   // Clean up the controller when the widget is disposed.
+  //   _controllers.dispose();
+  //   // textAreacontroller.dispose();
+  //   super.dispose();
+  // }
   // List _selecteCheckbox = List();
   List _surveyForm;
   String valueSelected;
@@ -802,7 +834,7 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
   String country;
   List<String> countryList = List();
   List listData;
-  String textArea, textBox;
+  // String textArea, textBox;
 
   List blank;
   bool boolValue = true;
@@ -867,7 +899,7 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
       });
     }
   }
-
+int top_nav;
   // bool isLoading = true;
   @override
   void initState() {
@@ -885,6 +917,9 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
     }
 
     countryList = <String>['INDIA'];
+        String ss = widget.bannerResponse.data.top_nav;
+    String s = "0xff" + ss.substring(1);
+    top_nav = int.parse(s);
 
     super.initState();
   }
@@ -893,19 +928,16 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
   Widget build(BuildContext context) {
     print('surveyList len => ' + _surveyForm.length.toString());
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.surveyName),
-          //     () {
-          //   // _scaffoldKey.currentState.openDrawer();
-          //   Navigator.of(context).pop();
-          // },
-          //     () {
-          //   // Navigator.of(context).pop();
-          // },
-          // isLeading: true,
-          // isAction: false,
-          // title: widget.surveyName,
-        ),
+                appBar: CustomView.appBarCustom('Arrow-Icon-02', 'Bt-Close-01', () {
+            // _scaffoldKey.currentState.openDrawer();
+            Navigator.of(context).pop();
+          }, () {
+            // Navigator.of(context).pop();
+          },
+              isLeading: true,
+              isAction: false,
+              title: widget.surveyName,
+              top_nav: top_nav),
         body: Stack(
           alignment: Alignment.center,
           children: [
@@ -919,6 +951,7 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                       child: ListView.builder(
                           itemCount: _surveyForm.length,
                           itemBuilder: (context, index) {
+                            _controllers.add(new TextEditingController());
                             print('in builder');
                             String name = _surveyForm[index].filedName;
                             if (_surveyForm[index]
@@ -960,264 +993,517 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                               }
                               // lengthFind(comma.length);
                               // ignore: missing_return
-                              return StatefulBuilder(
-                                builder: (con, updateState) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      require.toString().toLowerCase() == "no"
-                                          ? Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name(Optional) :'
-                                                    .toUpperCase(),
-                                                style: kheadingStyle.apply(
-                                                  fontSizeFactor: 1.2,
-                                                  fontWeightDelta: 5,
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: Text(
-                                                '$name :'.toUpperCase(),
-                                                style: kheadingStyle.apply(
-                                                  fontSizeFactor: 1.2,
-                                                  fontWeightDelta: 5,
-                                                ),
-                                              ),
-                                            ),
-                                      for (int i = 0; i < comma.length; i++)
-                                        // inputs.add(true),
-                                        // ignore: missing_return
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                              top: 8, left: 8),
-                                          child: require
-                                                      .toString()
-                                                      .toLowerCase() ==
-                                                  "no"
-                                              ? CustomView.checkbox(
-                                                  comma[i],
-                                                  checkList[i],
-                                                  // values[i.toString()],
-                                                  (value) {
-                                                    updateState(() {
-                                                      checkList[i] = value;
-                                                      print(checkList[i]);
-
-                                                      createDoc["$name"] =
-                                                          comma[i];
-                                                      print(createDoc);
-                                                    });
-                                                  },
-                                                )
-                                              : CustomView.checkbox(
-                                                  comma[i],
-                                                  checkList[i],
-                                                  // values[i.toString()],
-
-                                                  (value) {
-                                                    updateState(() {
-                                                      checkList[i] = value;
-                                                      print(checkList[i]);
-                                                      valueRequired["$name"] =
-                                                          true;
-                                                      createDoc["$name"] =
-                                                          comma[i];
-                                                      print(createDoc);
-                                                    });
-                                                  },
-                                                ),
-                                        )
-                                    ],
-                                  );
-                                },
-                              );
+                              // return StatefulBuilder(
+                              //   builder: (con, updateState) {
+                              //     return Column(
+                              //       crossAxisAlignment:
+                              //           CrossAxisAlignment.start,
+                              //       mainAxisAlignment: MainAxisAlignment.start,
+                              //       children: [
+                              //         require.toString().toLowerCase() == "no"
+                              //             ? Container(
+                              //                 margin: const EdgeInsets.only(
+                              //                     top: 20, left: 20),
+                              //                 child: Text(
+                              //                   '$name(Optional) :'
+                              //                       .toUpperCase(),
+                              //                   style: kheadingStyle.apply(
+                              //                     fontSizeFactor: 1.2,
+                              //                     fontWeightDelta: 5,
+                              //                   ),
+                              //                 ),
+                              //               )
+                              //             : Container(
+                              //                 margin: const EdgeInsets.only(
+                              //                     top: 20, left: 20),
+                              //                 child: Text(
+                              //                   '$name :'.toUpperCase(),
+                              //                   style: kheadingStyle.apply(
+                              //                     fontSizeFactor: 1.2,
+                              //                     fontWeightDelta: 5,
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //         for (int i = 0; i < comma.length; i++)
+                              //           // inputs.add(true),
+                              //           // ignore: missing_return
+                              //           Container(
+                              //             margin: const EdgeInsets.only(
+                              //                 top: 8, left: 8),
+                              //             child: require
+                              //                         .toString()
+                              //                         .toLowerCase() ==
+                              //                     "no"
+                              //                 ? CustomView.checkbox(
+                              //                     comma[i],
+                              //                     checkList[i],
+                              //                     // values[i.toString()],
+                              //                     (value) {
+                              //                       updateState(() {
+                              //                         checkList[i] = value;
+                              //                         print(checkList[i]);
+                              //
+                              //                         createDoc["$name"] =
+                              //                             comma[i];
+                              //                         print(createDoc);
+                              //                       });
+                              //                     },
+                              //                   )
+                              //                 : CustomView.checkbox(
+                              //                     comma[i],
+                              //                     checkList[i],
+                              //                     // values[i.toString()],
+                              //
+                              //                     (value) {
+                              //                       updateState(() {
+                              //                         checkList[i] = value;
+                              //                         print(checkList[i]);
+                              //                         valueRequired["$name"] =
+                              //                             true;
+                              //                         createDoc["$name"] =
+                              //                             comma[i];
+                              //                         print(createDoc);
+                              //                       });
+                              //                     },
+                              //                   ),
+                              //           )
+                              //       ],
+                              //     );
+                              //   },
+                              // );
                               // ignore: missing_return
-                            } else if (type.toLowerCase() == "radio box") {
-                              return StatefulBuilder(
-                                  builder: (con, updateState) {
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    require.toString().toLowerCase() == "no"
-                                        ? Container(
-                                            margin: const EdgeInsets.only(
-                                                top: 8, left: 8),
-                                            child: Text(
-                                              '$name(Optional) :'.toUpperCase(),
-                                              style: kheadingStyle.apply(
-                                                fontSizeFactor: 1.2,
-                                                fontWeightDelta: 5,
-                                              ),
-                                            ),
+                              return Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  require.toString().toLowerCase() == "no"
+                                      ? Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 20, left: 20),
+                                    child: Text(
+                                      '$name(Optional) :'
+                                          .toUpperCase(),
+                                      style: kheadingStyle.apply(
+                                        fontSizeFactor: 1.2,
+                                        fontWeightDelta: 5,
+                                      ),
+                                    ),
+                                  )
+                                      : Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 20, left: 20),
+                                    child: Text(
+                                      '$name :'.toUpperCase(),
+                                      style: kheadingStyle.apply(
+                                        fontSizeFactor: 1.2,
+                                        fontWeightDelta: 5,
+                                      ),
+                                    ),
+                                  ),
+                                  for (int i = 0; i < comma.length; i++)
+                                  // inputs.add(true),
+                                  // ignore: missing_return
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                          top: 8, left: 8),
+                                      child: require
+                                          .toString()
+                                          .toLowerCase() ==
+                                          "no"
+                                          ? CustomView.checkbox(
+                                        comma[i],
+                                        checkList[i],
+                                        // values[i.toString()],
+                                            (value) {
+                                              checkList[i] = value;
+                                              print(checkList[i]);
+
+                                              createDoc["$name"] =
+                                              comma[i];
+                                              print(createDoc);
+                                          // updateState(() {
+                                          //
+                                          // });
+                                        },
+                                      )
+                                          : CustomView.checkbox(
+                                        comma[i],
+                                        checkList[i],
+                                        // values[i.toString()],
+
+                                            (value) {
+                                          // updateState(() {
+                                          //
+                                          // });
+                                              checkList[i] = value;
+                                              print(checkList[i]);
+                                              valueRequired["$name"] =
+                                              true;
+                                              createDoc["$name"] =
+                                              comma[i];
+                                              print(createDoc);
+                                        },
+                                      ),
+                                    )
+                                ],
+                              );
+                            }
+                            else if (type.toLowerCase() == "radio box") {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  require.toString().toLowerCase() == "no"
+                                      ? Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 8, left: 8),
+                                    child: Text(
+                                      '$name(Optional) :'.toUpperCase(),
+                                      style: kheadingStyle.apply(
+                                        fontSizeFactor: 1.2,
+                                        fontWeightDelta: 5,
+                                      ),
+                                    ),
+                                  )
+                                      : Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 20, left: 20),
+                                    child: Text(
+                                      '$name :'.toUpperCase(),
+                                      style: kheadingStyle.apply(
+                                        fontSizeFactor: 1.2,
+                                        fontWeightDelta: 5,
+                                      ),
+                                    ),
+                                  ),
+                                  for (int i = 0; i < comma.length; i++)
+                                    Container(
+                                      margin:
+                                      // ignore: missing_return
+                                      const EdgeInsets.only(
+                                          top: 8, left: 8),
+                                      child: Row(
+                                        children: <Widget>[
+                                          (require.toString().toLowerCase() ==
+                                              "no")
+                                              ? Radio(
+                                            activeColor: Colors.green,
+                                            toggleable: false,
+                                            onChanged: (int fn) {
+                                              _value2 = fn;
+                                              // valueRequired["$name"] = comma[i];
+                                              createDoc["$name"] =
+                                              comma[i];
+                                              print(createDoc);
+                                              // updateState(() {
+                                              //
+                                              // });
+                                            },
+                                            groupValue: _value2,
+                                            value: i,
                                           )
-                                        : Container(
-                                            margin: const EdgeInsets.only(
-                                                top: 20, left: 20),
-                                            child: Text(
-                                              '$name :'.toUpperCase(),
-                                              style: kheadingStyle.apply(
-                                                fontSizeFactor: 1.2,
-                                                fontWeightDelta: 5,
-                                              ),
+                                              : Radio(
+                                            activeColor: Colors.green,
+                                            toggleable: false,
+                                            onChanged: (int fn) {
+                                              // updateState(() {
+                                              //
+                                              // });
+                                              _value2 = fn;
+                                              valueRequired["$name"] =
+                                              true;
+                                              createDoc["$name"] =
+                                              comma[i];
+                                              print(createDoc);
+                                            },
+                                            groupValue: _value2,
+                                            value: i,
+                                          ),
+                                          Text(
+                                            comma[i],
+                                            style: kheadingStyle.apply(
+                                              fontSizeFactor: 1.2,
+                                              fontWeightDelta: 5,
                                             ),
                                           ),
-                                    for (int i = 0; i < comma.length; i++)
-                                      Container(
-                                        margin:
-                                            // ignore: missing_return
-                                            const EdgeInsets.only(
-                                                top: 8, left: 8),
-                                        child: Row(
-                                          children: <Widget>[
-                                            (require.toString().toLowerCase() ==
-                                                    "no")
-                                                ? Radio(
-                                                    activeColor: Colors.green,
-                                                    toggleable: false,
-                                                    onChanged: (int fn) {
-                                                      updateState(() {
-                                                        _value2 = fn;
-                                                        // valueRequired["$name"] = comma[i];
-                                                        createDoc["$name"] =
-                                                            comma[i];
-                                                        print(createDoc);
-                                                      });
-                                                    },
-                                                    groupValue: _value2,
-                                                    value: i,
-                                                  )
-                                                : Radio(
-                                                    activeColor: Colors.green,
-                                                    toggleable: false,
-                                                    onChanged: (int fn) {
-                                                      updateState(() {
-                                                        _value2 = fn;
-                                                        valueRequired["$name"] =
-                                                            true;
-                                                        createDoc["$name"] =
-                                                            comma[i];
-                                                        print(createDoc);
-                                                      });
-                                                    },
-                                                    groupValue: _value2,
-                                                    value: i,
-                                                  ),
-                                            Text(
-                                              comma[i],
-                                              style: kheadingStyle.apply(
-                                                fontSizeFactor: 1.2,
-                                                fontWeightDelta: 5,
-                                              ),
-                                            ),
-                                            // Text(comma[i]),
-                                          ],
-                                        ),
+                                          // Text(comma[i]),
+                                        ],
                                       ),
-                                  ],
-                                );
-                              });
+                                    ),
+                                ],
+                              );
+                              // return StatefulBuilder(
+                              //     builder: (con, updateState) {
+                              //   return Column(
+                              //     mainAxisAlignment: MainAxisAlignment.start,
+                              //     crossAxisAlignment: CrossAxisAlignment.start,
+                              //     children: [
+                              //       require.toString().toLowerCase() == "no"
+                              //           ? Container(
+                              //               margin: const EdgeInsets.only(
+                              //                   top: 8, left: 8),
+                              //               child: Text(
+                              //                 '$name(Optional) :'.toUpperCase(),
+                              //                 style: kheadingStyle.apply(
+                              //                   fontSizeFactor: 1.2,
+                              //                   fontWeightDelta: 5,
+                              //                 ),
+                              //               ),
+                              //             )
+                              //           : Container(
+                              //               margin: const EdgeInsets.only(
+                              //                   top: 20, left: 20),
+                              //               child: Text(
+                              //                 '$name :'.toUpperCase(),
+                              //                 style: kheadingStyle.apply(
+                              //                   fontSizeFactor: 1.2,
+                              //                   fontWeightDelta: 5,
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //       for (int i = 0; i < comma.length; i++)
+                              //         Container(
+                              //           margin:
+                              //               // ignore: missing_return
+                              //               const EdgeInsets.only(
+                              //                   top: 8, left: 8),
+                              //           child: Row(
+                              //             children: <Widget>[
+                              //               (require.toString().toLowerCase() ==
+                              //                       "no")
+                              //                   ? Radio(
+                              //                       activeColor: Colors.green,
+                              //                       toggleable: false,
+                              //                       onChanged: (int fn) {
+                              //                         updateState(() {
+                              //                           _value2 = fn;
+                              //                           // valueRequired["$name"] = comma[i];
+                              //                           createDoc["$name"] =
+                              //                               comma[i];
+                              //                           print(createDoc);
+                              //                         });
+                              //                       },
+                              //                       groupValue: _value2,
+                              //                       value: i,
+                              //                     )
+                              //                   : Radio(
+                              //                       activeColor: Colors.green,
+                              //                       toggleable: false,
+                              //                       onChanged: (int fn) {
+                              //                         updateState(() {
+                              //                           _value2 = fn;
+                              //                           valueRequired["$name"] =
+                              //                               true;
+                              //                           createDoc["$name"] =
+                              //                               comma[i];
+                              //                           print(createDoc);
+                              //                         });
+                              //                       },
+                              //                       groupValue: _value2,
+                              //                       value: i,
+                              //                     ),
+                              //               Text(
+                              //                 comma[i],
+                              //                 style: kheadingStyle.apply(
+                              //                   fontSizeFactor: 1.2,
+                              //                   fontWeightDelta: 5,
+                              //                 ),
+                              //               ),
+                              //               // Text(comma[i]),
+                              //             ],
+                              //           ),
+                              //         ),
+                              //     ],
+                              //   );
+                              // });
                               // }
                               // ignore: missing_return
-                            } else if (type.toLowerCase() == "select box") {
+                            }
+                            else if (type.toLowerCase() == "select box") {
                               for (int i = 0; i < comma.length; i++) {
                                 // ignore: missing_return
                                 selectedItemValue.add(comma[i]);
                               }
                               print('comma list => ' + comma.toString());
-                              return StatefulBuilder(
-                                  builder: (con, updateState) {
-                                return Padding(
+                              return
+                                Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       (require.toString().toLowerCase() == "no")
                                           ? Container(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  _surveyForm[index]
-                                                          .filedName
-                                                          .toString()
-                                                          .toUpperCase() +
-                                                      "Optional :",
-                                                  style: kheadingStyle.apply(
-                                                    fontSizeFactor: 1.2,
-                                                    fontWeightDelta: 5,
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  _surveyForm[index]
-                                                          .filedName
-                                                          .toString()
-                                                          .toUpperCase() +
-                                                      " :",
-                                                  style: kheadingStyle.apply(
-                                                    fontSizeFactor: 1.2,
-                                                    fontWeightDelta: 5,
-                                                  ),
-                                                ),
-                                              ),
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            _surveyForm[index]
+                                                .filedName
+                                                .toString()
+                                                .toUpperCase() +
+                                                "Optional :",
+                                            style: kheadingStyle.apply(
+                                              fontSizeFactor: 1.2,
+                                              fontWeightDelta: 5,
                                             ),
+                                          ),
+                                        ),
+                                      )
+                                          : Container(
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            _surveyForm[index]
+                                                .filedName
+                                                .toString()
+                                                .toUpperCase() +
+                                                " :",
+                                            style: kheadingStyle.apply(
+                                              fontSizeFactor: 1.2,
+                                              fontWeightDelta: 5,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                       SizedBox(
                                         height: 10,
                                       ),
                                       (require.toString().toLowerCase() == "no")
                                           ? CustomView.buildDropDown(
-                                              context: context,
-                                              key: ValueKey('${newValue}'),
-                                              inputValue: newValue,
-                                              list: comma,
-                                              fn: (value) {
-                                                updateState(() {
-                                                  newValues[index] = value;
-                                                  createDoc[name] =
-                                                      newValues[index]
-                                                          .toString();
+                                        context: context,
+                                        key: ValueKey('${newValue}'),
+                                        inputValue: newValue,
+                                        list: comma,
+                                        onchanged: (value) {
+                                          // FocusScope.of(context).requestFocus(FocusNode());
+                                          newValues[index] = value;
 
-                                                  print(createDoc[name]);
-                                                });
-                                              },
-                                              text: newValues[index],
-                                            )
+                                          createDoc[name] =
+                                              newValues[index]
+                                                  .toString();
+
+                                          print(createDoc[name]);
+
+                                        },
+                                        text: newValues[index],
+                                      )
                                           : CustomView.buildDropDown(
-                                              context: context,
-                                              key: ValueKey('${newValue}'),
-                                              inputValue: newValue,
-                                              list: comma,
-                                              fn: (value) {
-                                                updateState(() {
-                                                  newValues[index] = value;
-                                                  createDoc[name] =
-                                                      newValues[index]
-                                                          .toString();
-                                                  valueRequired["$name"] = true;
-                                                  print(createDoc[name]);
-                                                });
-                                              },
-                                              text: newValues[index],
-                                            ),
+                                        context: context,
+                                        key: ValueKey('${newValue}'),
+                                        inputValue: newValue,
+                                        list: comma,
+                                        onchanged: (value) {
+                                          // updateState(() {
+                                          //
+                                          // });
+                                          // newValue = value;
+                                        // setState(() {
+                                          newValues[index] = value.toString();
+                                        // });
+                                          createDoc[name] =
+                                              newValues[index]
+                                                  .toString();
+                                          if(value.toString().isNotEmpty) {
+                                            valueRequired["$name"] = true;
+                                          }
+                                          print(createDoc[name]);
+                                        },
+                                        text: newValues[index],
+                                      ),
                                     ],
                                   ),
                                 );
-                              });
+                              // return StatefulBuilder(
+                              //     builder: (con, updateState) {
+                              //   return
+                              //     Padding(
+                              //     padding: const EdgeInsets.symmetric(
+                              //         horizontal: 10.0),
+                              //     child: Column(
+                              //       crossAxisAlignment:
+                              //           CrossAxisAlignment.start,
+                              //       children: [
+                              //         (require.toString().toLowerCase() == "no")
+                              //             ? Container(
+                              //                 child: Padding(
+                              //                   padding:
+                              //                       const EdgeInsets.all(8.0),
+                              //                   child: Text(
+                              //                     _surveyForm[index]
+                              //                             .filedName
+                              //                             .toString()
+                              //                             .toUpperCase() +
+                              //                         "Optional :",
+                              //                     style: kheadingStyle.apply(
+                              //                       fontSizeFactor: 1.2,
+                              //                       fontWeightDelta: 5,
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //               )
+                              //             : Container(
+                              //                 child: Padding(
+                              //                   padding:
+                              //                       const EdgeInsets.all(8.0),
+                              //                   child: Text(
+                              //                     _surveyForm[index]
+                              //                             .filedName
+                              //                             .toString()
+                              //                             .toUpperCase() +
+                              //                         " :",
+                              //                     style: kheadingStyle.apply(
+                              //                       fontSizeFactor: 1.2,
+                              //                       fontWeightDelta: 5,
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //         SizedBox(
+                              //           height: 10,
+                              //         ),
+                              //         (require.toString().toLowerCase() == "no")
+                              //             ? CustomView.buildDropDown(
+                              //                 context: context,
+                              //                 key: ValueKey('${newValue}'),
+                              //                 inputValue: newValue,
+                              //                 list: comma,
+                              //                 fn: (value) {
+                              //                   updateState(() {
+                              //                     newValues[index] = value;
+                              //                     createDoc[name] =
+                              //                         newValues[index]
+                              //                             .toString();
+                              //
+                              //                     print(createDoc[name]);
+                              //                   });
+                              //                 },
+                              //                 text: newValues[index],
+                              //               )
+                              //             : CustomView.buildDropDown(
+                              //                 context: context,
+                              //                 key: ValueKey('${newValue}'),
+                              //                 inputValue: newValue,
+                              //                 list: comma,
+                              //                 fn: (value) {
+                              //                   updateState(() {
+                              //                     newValues[index] = value;
+                              //                     createDoc[name] =
+                              //                         newValues[index]
+                              //                             .toString();
+                              //                     valueRequired["$name"] = true;
+                              //                     print(createDoc[name]);
+                              //                   });
+                              //                 },
+                              //                 text: newValues[index],
+                              //               ),
+                              //       ],
+                              //     ),
+                              //   );
+                              // });
                             } else if (type.toLowerCase() == "text box") {
                               return Container(
                                   child: Column(
@@ -1250,42 +1536,80 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  StatefulBuilder(builder: (con, updateState) {
-                                    return (require.toString().toLowerCase() ==
-                                            "no")
-                                        ? CustomView.editTextField(
-                                            color: Color(0xff004fc10),
-                                            keyborad: TextInputType.text,
-                                            // labelText: 'LAST NAME',
-                                            lengthLimiting: 20,
-                                            // height: 50,
-                                            fn: (input) {
-                                              updateState(() {
-                                                textBox = input.toString();
-                                                // createDoc["name1"] = name;
-                                                createDoc["$name"] = textBox;
-                                                print(createDoc);
-                                                // listMap.add(textBox);
-                                                // print(listMap);
-                                              });
-                                            })
-                                        : CustomView.editTextField(
-                                            color: Color(0xff004fc10),
-                                            keyborad: TextInputType.text,
-                                            // labelText: 'LAST NAME',
-                                            lengthLimiting: 20,
-                                            fn: (input) {
-                                              updateState(() {
-                                                textBox = input.toString();
-                                                // createDoc["name1"] = name;
-                                                createDoc["$name"] = textBox;
-                                                valueRequired["$name"] = true;
-                                                print(createDoc);
-                                                // listMap.add(textBox);
-                                                // print(listMap);
-                                              });
-                                            });
-                                  })
+                                  // StatefulBuilder(builder: (con, updateState) {
+                                  //   return (require.toString().toLowerCase() ==
+                                  //           "no")
+                                  //       ? CustomView.editTextField(
+                                  //           color: Color(0xff004fc10),
+                                  //           keyborad: TextInputType.text,
+                                  //           // labelText: 'LAST NAME',
+                                  //           lengthLimiting: 20,
+                                  //           // height: 50,
+                                  //           fn: (input) {
+                                  //             updateState(() {
+                                  //               textBox = input.toString();
+                                  //               // createDoc["name1"] = name;
+                                  //               createDoc["$name"] = textBox;
+                                  //               print(createDoc);
+                                  //               // listMap.add(textBox);
+                                  //               // print(listMap);
+                                  //             });
+                                  //           })
+                                  //       : CustomView.editTextField(
+                                  //           color: Color(0xff004fc10),
+                                  //           keyborad: TextInputType.text,
+                                  //           // labelText: 'LAST NAME',
+                                  //           lengthLimiting: 20,
+                                  //           fn: (input) {
+                                  //             updateState(() {
+                                  //               textBox = input.toString();
+                                  //               // createDoc["name1"] = name;
+                                  //               createDoc["$name"] = textBox;
+                                  //               valueRequired["$name"] = true;
+                                  //               print(createDoc);
+                                  //               // listMap.add(textBox);
+                                  //               // print(listMap);
+                                  //             });
+                                  //           });
+                                  // })
+                                (require.toString().toLowerCase() ==
+                                    "no")
+                                    ? CustomView.editTextField(
+                                  controller: _controllers[index],
+                                    color: Color(0xff004fc10),
+                                    keyborad: TextInputType.text,
+                                    // labelText: 'LAST NAME',
+                                    lengthLimiting: 20,
+                                    // height: 50,
+                                    fn: (input) {
+                                      // updateState(() {
+                                      String textBox='';
+                                        textBox = _controllers[index].text;
+                                        // createDoc["name1"] = name;
+                                        createDoc["$name"] = textBox;
+                                        print(createDoc);
+                                        // listMap.add(textBox);
+                                        // print(listMap);
+                                      // });
+                                    })
+                                    : CustomView.editTextField(
+                                    color: Color(0xff004fc10),
+                                    keyborad: TextInputType.text,
+                                    controller: _controllers[index],
+                                    // labelText: 'LAST NAME',
+                                    lengthLimiting: 20,
+                                    fn: (input) {
+                                      // updateState(() {
+                                      String textBox='';
+                                        textBox = _controllers[index].text;
+                                        // createDoc["name1"] = name;
+                                        createDoc["$name"] = textBox;
+                                        valueRequired["$name"] = true;
+                                        print(createDoc);
+                                        // listMap.add(textBox);
+                                        // print(listMap);
+                                      // });
+                                    }),
                                 ],
                               ));
                             } else {
@@ -1320,45 +1644,87 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  StatefulBuilder(builder: (con, updateState) {
-                                    return (require.toString().toLowerCase() ==
-                                            "no")
-                                        ? CustomView.editTextField(
-                                            color: Color(0xff004fc10),
-                                            keyborad: TextInputType.text,
-                                            // labelText: 'LAST NAME',
-                                            lengthLimiting: 20,
-                                            // height: 50,
+                                (require.toString().toLowerCase() ==
+                                    "no")
+                                    ? CustomView.editTextField(
+                                    color: Color(0xff004fc10),
+                                    controller: _controllers[index],
+                                    keyborad: TextInputType.text,
+                                    // labelText: 'LAST NAME',
+                                    lengthLimiting: 20,
+                                    // height: 50,
 
-                                            fn: (input) {
-                                              updateState(() {
-                                                textArea = input.toString();
-                                                // createDoc["name1"] = name;
-                                                createDoc["$name"] = textArea;
-                                                print(createDoc);
-                                                // listMap.add(textBox);
-                                                // print(listMap);
-                                              });
-                                            })
-                                        : CustomView.editTextField(
-                                            color: Color(0xff004fc10),
-                                            keyborad: TextInputType.text,
-                                            // labelText: 'LAST NAME',
-                                            lengthLimiting: 20,
-                                            // height: 50,
+                                    fn: (input) {
+                                      // updateState(() {
+                                      String textArea='';
+                                        textArea = _controllers[index].text;
+                                        // createDoc["name1"] = name;
+                                        createDoc["$name"] = textArea;
+                                        print(createDoc);
+                                        // listMap.add(textBox);
+                                        // print(listMap);
+                                      // });
+                                    })
+                                    : CustomView.editTextField(
+                                    color: Color(0xff004fc10),
+                                    keyborad: TextInputType.text,
+                                    // labelText: 'LAST NAME',
+                                    controller: _controllers[index],
+                                    lengthLimiting: 20,
+                                    // height: 50,
 
-                                            fn: (input) {
-                                              updateState(() {
-                                                textArea = input.toString();
-                                                // createDoc["name1"] = name;
-                                                createDoc["$name"] = textArea;
-                                                valueRequired["$name"] = true;
-                                                print(createDoc);
-                                                // listMap.add(textBox);
-                                                // print(listMap);
-                                              });
-                                            });
-                                  })
+                                    fn: (input) {
+                                      // updateState(() {
+                                      String textArea='';
+                                        textArea = _controllers[index].text;
+                                        // createDoc["name1"] = name;
+                                        createDoc["$name"] = textArea;
+
+                                         valueRequired["$name"] = true;
+                                        print(createDoc);
+                                        // listMap.add(textBox);
+                                        // print(listMap);
+                                      // });
+                                    }),
+                                  // StatefulBuilder(builder: (con, updateState) {
+                                  //   return (require.toString().toLowerCase() ==
+                                  //           "no")
+                                  //       ? CustomView.editTextField(
+                                  //           color: Color(0xff004fc10),
+                                  //           keyborad: TextInputType.text,
+                                  //           // labelText: 'LAST NAME',
+                                  //           lengthLimiting: 20,
+                                  //           // height: 50,
+                                  //
+                                  //           fn: (input) {
+                                  //             updateState(() {
+                                  //               textArea = input.toString();
+                                  //               // createDoc["name1"] = name;
+                                  //               createDoc["$name"] = textArea;
+                                  //               print(createDoc);
+                                  //               // listMap.add(textBox);
+                                  //               // print(listMap);
+                                  //             });
+                                  //           })
+                                  //       : CustomView.editTextField(
+                                  //           color: Color(0xff004fc10),
+                                  //           keyborad: TextInputType.text,
+                                  //           // labelText: 'LAST NAME',
+                                  //           lengthLimiting: 20,
+                                  //           // height: 50,
+                                  //
+                                  //           fn: (input) {
+                                  //             updateState(() {
+                                  //               textArea = input.toString();
+                                  //               // createDoc["name1"] = name;
+                                  //               createDoc["$name"] = textArea;
+                                  //               valueRequired["$name"] = true;
+                                  //               print(createDoc);
+                                  //               // listMap.add(textBox);
+                                  //               // print(listMap);
+                                  //             });
+                                  //           });
+                                  // })
                                 ],
                               ));
                             }
@@ -1432,13 +1798,7 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                                 setState(() {
                                   loadProgress();
                                 });
-                                // setState(() {
-                                //   Navigator.of(_keyLoader.currentContext,
-                                //           rootNavigator: true)
-                                //       .pop();
-                                //   // CicularIndicator(
 
-                                // });
                                 final BannerResponse bannerResponse =
                                     await ApiCall.getBanner();
                                 Navigator.push(context,
@@ -1511,7 +1871,7 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
                               height: 30,
                             ),
                             Text(
-                              "Loading..",
+                              "Sending Data to Server",
                               style: TextStyle(
                                 color: Colors.blue,
                               ),
@@ -1523,578 +1883,6 @@ class _DynamicSurveyFormState extends State<DynamicSurveyForm> {
           ],
         ));
 
-    // return IgnorePointer(
-    //   ignoring: !isLoading,
-    //   child: Scaffold(
-    //       appBar: AppBar(
-    //         title: Text(widget.surveyName),
-    //         //     () {
-    //         //   // _scaffoldKey.currentState.openDrawer();
-    //         //   Navigator.of(context).pop();
-    //         // },
-    //         //     () {
-    //         //   // Navigator.of(context).pop();
-    //         // },
-    //         // isLeading: true,
-    //         // isAction: false,
-    //         // title: widget.surveyName,
-    //       ),
-    //       body: Form(
-    //         child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           mainAxisAlignment: MainAxisAlignment.start,
-    //           children: <Widget>[
-    //             Expanded(
-    //               child: Container(
-    //                 child: ListView.builder(
-    //                     itemCount: _surveyForm.length,
-    //                     itemBuilder: (context, index) {
-    //                       print('in builder');
-    //                       String name = _surveyForm[index].filedName;
-    //                       if (_surveyForm[index].filedRequired.toLowerCase() ==
-    //                           "yes") {
-    //                         valueRequired[name] = false;
-    //                         print(name + ' inserted into valueRequired map');
-    //                       }
-    //                       // List requiredfield = new List();
-    //                       // for (int i = 0; i < _surveyForm.length; i++) {
-    //                       //   if (_surveyForm[index].filedRequired) {
-    //                       //     requiredfield.add(_surveyForm[index].filedName);
-    //                       //   }
-    //                       // }
-    //                       // requiredfield.forEach((element) {
-    //                       //   valueRequired["$element"] = false;
-    //                       // });
 
-    //                       print('in filedName');
-    //                       List<String> comma =
-    //                           _surveyForm[index].filedValue.split(",");
-    //                       if (newValues[index].isEmpty)
-    //                         newValues[index] = comma[0];
-    //                       String type = _surveyForm[index].filedType;
-    //                       print('in filedType');
-    //                       var require = _surveyForm[index].filedRequired;
-    //                       print('in filedRequired');
-    //                       String fv = _surveyForm[index].filedValue;
-    //                       print('in filedValue');
-    //                       print('in formValuesComma');
-    //                       print('comma len => ' + comma.length.toString());
-
-    //                       if (type.toLowerCase() == "check box") {
-    //                         for (int i = 0; i < comma.length; i++) {
-    //                           // setState(() {
-    //                           checkList.add(false);
-    //                           // });
-    //                         }
-    //                         // lengthFind(comma.length);
-    //                         // ignore: missing_return
-    //                         return StatefulBuilder(
-    //                           builder: (con, updateState) {
-    //                             return Column(
-    //                               crossAxisAlignment: CrossAxisAlignment.start,
-    //                               mainAxisAlignment: MainAxisAlignment.start,
-    //                               children: [
-    //                                 require.toString().toLowerCase() == "no"
-    //                                     ? Container(
-    //                                         margin: const EdgeInsets.only(
-    //                                             top: 20, left: 20),
-    //                                         child: Text(
-    //                                           '$name(Optional) :'.toUpperCase(),
-    //                                           style: kheadingStyle.apply(
-    //                                             fontSizeFactor: 1.2,
-    //                                             fontWeightDelta: 5,
-    //                                           ),
-    //                                         ),
-    //                                       )
-    //                                     : Container(
-    //                                         margin: const EdgeInsets.only(
-    //                                             top: 20, left: 20),
-    //                                         child: Text(
-    //                                           '$name :'.toUpperCase(),
-    //                                           style: kheadingStyle.apply(
-    //                                             fontSizeFactor: 1.2,
-    //                                             fontWeightDelta: 5,
-    //                                           ),
-    //                                         ),
-    //                                       ),
-    //                                 for (int i = 0; i < comma.length; i++)
-    //                                   // inputs.add(true),
-    //                                   // ignore: missing_return
-    //                                   Container(
-    //                                     margin: const EdgeInsets.only(
-    //                                         top: 8, left: 8),
-    //                                     child:
-    //                                         require.toString().toLowerCase() ==
-    //                                                 "no"
-    //                                             ? CustomView.checkbox(
-    //                                                 comma[i],
-    //                                                 checkList[i],
-    //                                                 // values[i.toString()],
-    //                                                 (value) {
-    //                                                   updateState(() {
-    //                                                     checkList[i] = value;
-    //                                                     print(checkList[i]);
-
-    //                                                     createDoc["$name"] =
-    //                                                         comma[i];
-    //                                                     print(createDoc);
-    //                                                   });
-    //                                                 },
-    //                                               )
-    //                                             : CustomView.checkbox(
-    //                                                 comma[i],
-    //                                                 checkList[i],
-    //                                                 // values[i.toString()],
-
-    //                                                 (value) {
-    //                                                   updateState(() {
-    //                                                     checkList[i] = value;
-    //                                                     print(checkList[i]);
-    //                                                     valueRequired["$name"] =
-    //                                                         true;
-    //                                                     createDoc["$name"] =
-    //                                                         comma[i];
-    //                                                     print(createDoc);
-    //                                                   });
-    //                                                 },
-    //                                               ),
-    //                                   )
-    //                               ],
-    //                             );
-    //                           },
-    //                         );
-    //                         // ignore: missing_return
-    //                       } else if (type.toLowerCase() == "radio box") {
-    //                         return StatefulBuilder(builder: (con, updateState) {
-    //                           return Column(
-    //                             mainAxisAlignment: MainAxisAlignment.start,
-    //                             crossAxisAlignment: CrossAxisAlignment.start,
-    //                             children: [
-    //                               require.toString().toLowerCase() == "no"
-    //                                   ? Container(
-    //                                       margin: const EdgeInsets.only(
-    //                                           top: 8, left: 8),
-    //                                       child: Text(
-    //                                         '$name(Optional) :'.toUpperCase(),
-    //                                         style: kheadingStyle.apply(
-    //                                           fontSizeFactor: 1.2,
-    //                                           fontWeightDelta: 5,
-    //                                         ),
-    //                                       ),
-    //                                     )
-    //                                   : Container(
-    //                                       margin: const EdgeInsets.only(
-    //                                           top: 20, left: 20),
-    //                                       child: Text(
-    //                                         '$name :'.toUpperCase(),
-    //                                         style: kheadingStyle.apply(
-    //                                           fontSizeFactor: 1.2,
-    //                                           fontWeightDelta: 5,
-    //                                         ),
-    //                                       ),
-    //                                     ),
-    //                               for (int i = 0; i < comma.length; i++)
-    //                                 Container(
-    //                                   margin:
-    //                                       // ignore: missing_return
-    //                                       const EdgeInsets.only(
-    //                                           top: 8, left: 8),
-    //                                   child: Row(
-    //                                     children: <Widget>[
-    //                                       (require.toString().toLowerCase() ==
-    //                                               "no")
-    //                                           ? Radio(
-    //                                               activeColor: Colors.green,
-    //                                               toggleable: false,
-    //                                               onChanged: (int fn) {
-    //                                                 updateState(() {
-    //                                                   _value2 = fn;
-    //                                                   // valueRequired["$name"] = comma[i];
-    //                                                   createDoc["$name"] =
-    //                                                       comma[i];
-    //                                                   print(createDoc);
-    //                                                 });
-    //                                               },
-    //                                               groupValue: _value2,
-    //                                               value: i,
-    //                                             )
-    //                                           : Radio(
-    //                                               activeColor: Colors.green,
-    //                                               toggleable: false,
-    //                                               onChanged: (int fn) {
-    //                                                 updateState(() {
-    //                                                   _value2 = fn;
-    //                                                   valueRequired["$name"] =
-    //                                                       true;
-    //                                                   createDoc["$name"] =
-    //                                                       comma[i];
-    //                                                   print(createDoc);
-    //                                                 });
-    //                                               },
-    //                                               groupValue: _value2,
-    //                                               value: i,
-    //                                             ),
-    //                                       Text(
-    //                                         comma[i],
-    //                                         style: kheadingStyle.apply(
-    //                                           fontSizeFactor: 1.2,
-    //                                           fontWeightDelta: 5,
-    //                                         ),
-    //                                       ),
-    //                                       // Text(comma[i]),
-    //                                     ],
-    //                                   ),
-    //                                 ),
-    //                             ],
-    //                           );
-    //                         });
-    //                         // }
-    //                         // ignore: missing_return
-    //                       } else if (type.toLowerCase() == "select box") {
-    //                         for (int i = 0; i < comma.length; i++) {
-    //                           // ignore: missing_return
-    //                           selectedItemValue.add(comma[i]);
-    //                         }
-    //                         print('comma list => ' + comma.toString());
-    //                         return StatefulBuilder(builder: (con, updateState) {
-    //                           return Padding(
-    //                             padding: const EdgeInsets.symmetric(
-    //                                 horizontal: 10.0),
-    //                             child: Column(
-    //                               crossAxisAlignment: CrossAxisAlignment.start,
-    //                               children: [
-    //                                 (require.toString().toLowerCase() == "no")
-    //                                     ? Container(
-    //                                         child: Padding(
-    //                                           padding:
-    //                                               const EdgeInsets.all(8.0),
-    //                                           child: Text(
-    //                                             _surveyForm[index]
-    //                                                     .filedName
-    //                                                     .toString()
-    //                                                     .toUpperCase() +
-    //                                                 "Optional :",
-    //                                             style: kheadingStyle.apply(
-    //                                               fontSizeFactor: 1.2,
-    //                                               fontWeightDelta: 5,
-    //                                             ),
-    //                                           ),
-    //                                         ),
-    //                                       )
-    //                                     : Container(
-    //                                         child: Padding(
-    //                                           padding:
-    //                                               const EdgeInsets.all(8.0),
-    //                                           child: Text(
-    //                                             _surveyForm[index]
-    //                                                     .filedName
-    //                                                     .toString()
-    //                                                     .toUpperCase() +
-    //                                                 " :",
-    //                                             style: kheadingStyle.apply(
-    //                                               fontSizeFactor: 1.2,
-    //                                               fontWeightDelta: 5,
-    //                                             ),
-    //                                           ),
-    //                                         ),
-    //                                       ),
-    //                                 SizedBox(
-    //                                   height: 10,
-    //                                 ),
-    //                                 (require.toString().toLowerCase() == "no")
-    //                                     ? CustomView.buildDropDown(
-    //                                         context: context,
-    //                                         key: ValueKey('${newValue}'),
-    //                                         inputValue: newValue,
-    //                                         list: comma,
-    //                                         fn: (value) {
-    //                                           updateState(() {
-    //                                             newValues[index] = value;
-    //                                             createDoc[name] =
-    //                                                 newValues[index].toString();
-
-    //                                             print(createDoc[name]);
-    //                                           });
-    //                                         },
-    //                                         text: newValues[index],
-    //                                       )
-    //                                     : CustomView.buildDropDown(
-    //                                         context: context,
-    //                                         key: ValueKey('${newValue}'),
-    //                                         inputValue: newValue,
-    //                                         list: comma,
-    //                                         fn: (value) {
-    //                                           updateState(() {
-    //                                             newValues[index] = value;
-    //                                             createDoc[name] =
-    //                                                 newValues[index].toString();
-    //                                             valueRequired["$name"] = true;
-    //                                             print(createDoc[name]);
-    //                                           });
-    //                                         },
-    //                                         text: newValues[index],
-    //                                       ),
-    //                               ],
-    //                             ),
-    //                           );
-    //                         });
-    //                       } else if (type.toLowerCase() == "text box") {
-    //                         return Container(
-    //                             child: Column(
-    //                           crossAxisAlignment: CrossAxisAlignment.start,
-    //                           mainAxisAlignment: MainAxisAlignment.start,
-    //                           children: [
-    //                             require.toString().toLowerCase() == "no"
-    //                                 ? Container(
-    //                                     margin: const EdgeInsets.only(
-    //                                         top: 20, left: 20),
-    //                                     child: Text(
-    //                                       '$name(Optional) :'.toUpperCase(),
-    //                                       style: kheadingStyle.apply(
-    //                                         fontSizeFactor: 1.2,
-    //                                         fontWeightDelta: 5,
-    //                                       ),
-    //                                     ),
-    //                                   )
-    //                                 : Container(
-    //                                     margin: const EdgeInsets.only(
-    //                                         top: 20, left: 20),
-    //                                     child: Text(
-    //                                       '$name :'.toUpperCase(),
-    //                                       style: kheadingStyle.apply(
-    //                                         fontSizeFactor: 1.2,
-    //                                         fontWeightDelta: 5,
-    //                                       ),
-    //                                     ),
-    //                                   ),
-    //                             SizedBox(
-    //                               height: 10,
-    //                             ),
-    //                             StatefulBuilder(builder: (con, updateState) {
-    //                               return (require.toString().toLowerCase() ==
-    //                                       "no")
-    //                                   ? CustomView.editTextField(
-    //                                       color: Color(0xff004fc10),
-    //                                       keyborad: TextInputType.text,
-    //                                       // labelText: 'LAST NAME',
-    //                                       lengthLimiting: 20,
-    //                                       // height: 50,
-    //                                       fn: (input) {
-    //                                         updateState(() {
-    //                                           textBox = input.toString();
-    //                                           // createDoc["name1"] = name;
-    //                                           createDoc["$name"] = textBox;
-    //                                           print(createDoc);
-    //                                           // listMap.add(textBox);
-    //                                           // print(listMap);
-    //                                         });
-    //                                       })
-    //                                   : CustomView.editTextField(
-    //                                       color: Color(0xff004fc10),
-    //                                       keyborad: TextInputType.text,
-    //                                       // labelText: 'LAST NAME',
-    //                                       lengthLimiting: 20,
-    //                                       fn: (input) {
-    //                                         updateState(() {
-    //                                           textBox = input.toString();
-    //                                           // createDoc["name1"] = name;
-    //                                           createDoc["$name"] = textBox;
-    //                                           valueRequired["$name"] = true;
-    //                                           print(createDoc);
-    //                                           // listMap.add(textBox);
-    //                                           // print(listMap);
-    //                                         });
-    //                                       });
-    //                             })
-    //                           ],
-    //                         ));
-    //                       } else {
-    //                         return Container(
-    //                             child: Column(
-    //                           crossAxisAlignment: CrossAxisAlignment.start,
-    //                           mainAxisAlignment: MainAxisAlignment.start,
-    //                           children: [
-    //                             require.toString().toLowerCase() == "no"
-    //                                 ? Container(
-    //                                     margin: const EdgeInsets.only(
-    //                                         top: 20, left: 20),
-    //                                     child: Text(
-    //                                       '$name(Optional) :'.toUpperCase(),
-    //                                       style: kheadingStyle.apply(
-    //                                         fontSizeFactor: 1.2,
-    //                                         fontWeightDelta: 5,
-    //                                       ),
-    //                                     ),
-    //                                   )
-    //                                 : Container(
-    //                                     margin: const EdgeInsets.only(
-    //                                         top: 20, left: 20),
-    //                                     child: Text(
-    //                                       '$name :'.toUpperCase(),
-    //                                       style: kheadingStyle.apply(
-    //                                         fontSizeFactor: 1.2,
-    //                                         fontWeightDelta: 5,
-    //                                       ),
-    //                                     ),
-    //                                   ),
-    //                             SizedBox(
-    //                               height: 10,
-    //                             ),
-    //                             StatefulBuilder(builder: (con, updateState) {
-    //                               return (require.toString().toLowerCase() ==
-    //                                       "no")
-    //                                   ? CustomView.editTextField(
-    //                                       color: Color(0xff004fc10),
-    //                                       keyborad: TextInputType.text,
-    //                                       // labelText: 'LAST NAME',
-    //                                       lengthLimiting: 20,
-    //                                       // height: 50,
-
-    //                                       fn: (input) {
-    //                                         updateState(() {
-    //                                           textArea = input.toString();
-    //                                           // createDoc["name1"] = name;
-    //                                           createDoc["$name"] = textArea;
-    //                                           print(createDoc);
-    //                                           // listMap.add(textBox);
-    //                                           // print(listMap);
-    //                                         });
-    //                                       })
-    //                                   : CustomView.editTextField(
-    //                                       color: Color(0xff004fc10),
-    //                                       keyborad: TextInputType.text,
-    //                                       // labelText: 'LAST NAME',
-    //                                       lengthLimiting: 20,
-    //                                       // height: 50,
-
-    //                                       fn: (input) {
-    //                                         updateState(() {
-    //                                           textArea = input.toString();
-    //                                           // createDoc["name1"] = name;
-    //                                           createDoc["$name"] = textArea;
-    //                                           valueRequired["$name"] = true;
-    //                                           print(createDoc);
-    //                                           // listMap.add(textBox);
-    //                                           // print(listMap);
-    //                                         });
-    //                                       });
-    //                             })
-    //                           ],
-    //                         ));
-    //                       }
-    //                     }),
-    //               ),
-    //             ),
-    //             Padding(
-    //               padding: const EdgeInsets.all(8.0),
-    //               child: Container(
-    //                 margin: const EdgeInsets.only(right: 20),
-    //                 alignment: Alignment.bottomRight,
-    //                 child: CustomView.button(
-    //                   buttonColor: Colors.blue[900],
-    //                   buttonName: 'SUBMIT',
-    //                   circularRadius: 30,
-    //                   color: Colors.white,
-    //                   height: 50,
-    //                   isCircular: true,
-    //                   textSize: 20,
-    //                   width: 150,
-    //                   function: () async {
-    //                     // if(_formKey.currentState.validate())
-    //                     // {
-    //                     //   _formKey.currentState.save();
-    //                     // setState(() {
-    //                     //   isLoading = !isLoading;
-    //                     // });
-
-    //                     setState(() {
-    //                       Dialogs.showLoadingDialog(context, _keyLoader);
-    //                     });
-    //                     print("Create doc is " + createDoc.toString());
-    //                     print("Value required map is: " +
-    //                         valueRequired.toString());
-    //                     String leftFields = ' ';
-
-    //                     valueRequired.forEach((key, value) {
-    //                       if (value == false) {
-    //                         setState(() {
-    //                           leftFields = "$leftFields ," + key;
-    //                         });
-    //                       }
-    //                     });
-
-    //                     if (leftFields == ' ') {
-    //                       submitSurevy(
-    //                         // token: accessToken,
-    //                         surveyid: widget.surveyId,
-    //                         product: widget.inputDoc["Product"],
-    //                         // productid: _surveyFo,
-    //                         // productid: "5f46814711bfc11e2ce29071",
-    //                         // userid: userId,
-    //                         qntity: widget.inputDoc["qty"],
-    //                         full_name: widget.inputDoc["fullName"],
-    //                         address: widget.inputDoc["address"],
-    //                         village: widget.inputDoc["village"],
-    //                         postOffice: widget.inputDoc["post_office"],
-    //                         thana: widget.inputDoc["thana"],
-    //                         country: widget.inputDoc["country"],
-    //                         district: widget.inputDoc["district"],
-    //                         state: widget.inputDoc["state"],
-    //                         mobile: widget.inputDoc["mobile_Number"],
-    //                         pincode: widget.inputDoc["pincode"],
-    //                         formData: createDoc,
-    //                         image: widget.image,
-    //                         lal: widget.lat,
-    //                         long: widget.lng,
-    //                         // gender: widget.inputDoc["gender"],
-    //                       ).then((value) async {
-    //                         if (value.status == 'success') {
-    //                           setState(() {
-    //                             Navigator.of(_keyLoader.currentContext,
-    //                                     rootNavigator: true)
-    //                                 .pop();
-    //                           });
-    //                           final BannerResponse bannerResponse =
-    //                               await ApiCall.getBanner();
-    //                           Navigator.push(context,
-    //                               MaterialPageRoute(builder: (context) {
-    //                             return HomeScreen(
-    //                                 bannerResponse: bannerResponse);
-    //                           }));
-    //                           Toast.show(value.message, context);
-    //                         } else {
-    //                           setState(() {
-    //                             Navigator.of(_keyLoader.currentContext,
-    //                                     rootNavigator: true)
-    //                                 .pop();
-    //                           });
-    //                           Toast.show(value.message, context);
-    //                         }
-    //                       });
-    //                     } else {
-    //                       setState(() {
-    //                         CoolAlert.show(
-    //                           context: context,
-    //                           type: CoolAlertType.warning,
-    //                           text: "$leftFields are required",
-    //                         );
-    //                         print("Empty fields are $leftFields");
-    //                         Navigator.of(_keyLoader.currentContext,
-    //                                 rootNavigator: true)
-    //                             .pop();
-    //                         Navigator.of(context).pop();
-    //                       });
-    //                     }
-
-    //                     // }
-    //                   },
-    //                 ),
-    //               ),
-    //             )
-    //           ],
-    //         ),
-    //       )),
-
-    // );
   }
 }

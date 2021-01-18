@@ -54,24 +54,27 @@ class ApiCall {
     }
   }
 
-  static Future<SurveyListResponse> getSurveyList() async {
+  static Future<SurveyListResponse> getSurveyList(String authtoken , String blueAngel) async {
     final response = await http.post(
       Uri.encodeFull(AppConstants.surveyList),
       headers: {
         "accept": "application/json",
-        "authorization": "$token",
+        "authorization": "$authtoken",
       },
       body: json.encode({
-        "blu_angel": tokenCall,
+        "blu_angel": blueAngel,
       }),
     );
     if (response.statusCode == 200) {
       final String responseString = response.body;
-      print('response $response');
-      print('response ${response.statusCode}');
-      print('responseString $responseString');
-      return surveyListResponseFromJson(responseString);
+      SurveyListResponse surveyListResponse = SurveyListResponse();
+      // print('response $response');
+      // print('response ${response.statusCode}');
+      // print('responseString $responseString');
+      // return surveyListResponseFromJson(responseString);
+      return surveyListResponse;
     } else {
+
       return null;
     }
   }

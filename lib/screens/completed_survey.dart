@@ -277,8 +277,8 @@ class _CompletedSurveyState extends State<CompletedSurvey> {
                                       MaterialPageRoute(
                                         builder: (context) => ReportPage(
                                           completeOrReport: true,
-                                          surveyReportResponse:
-                                          surveyReportResponse,
+                                          // surveyReportResponse:
+                                          // surveyReportResponse,
                                         ),
                                       ),
                                     );

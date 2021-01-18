@@ -5,6 +5,7 @@ import 'dart:io' as Io;
 import 'package:blue_angel/models/bannerResponse.dart';
 import 'package:blue_angel/models/districtListResponse.dart';
 import 'package:blue_angel/models/stateListResponse.dart';
+import 'package:blue_angel/models/surveyListResponse.dart';
 import 'package:blue_angel/network/api_call.dart';
 import 'package:blue_angel/screens/dynamic_survey_form.dart';
 import 'package:blue_angel/utlis/values/styles.dart';
@@ -14,16 +15,20 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // import 'common/active_survey.dart';
 
 class ActiveSurveyForm extends StatefulWidget {
-  final List surveyForm, products;
+  final List surveyForm;
+  final List products;
   final String surveyName;
   final String surveyId;
   final StateListResponse stateListResponse;
   final BannerResponse bannerResponse;
   final String token;
+  final String bluAngel;
 
   const ActiveSurveyForm(
       {Key key,
@@ -33,6 +38,7 @@ class ActiveSurveyForm extends StatefulWidget {
       @required this.surveyId,
       @required this.stateListResponse,
       @required this.bannerResponse,
+        @required this.bluAngel,
         @required this.token
       })
       : super(key: key);
@@ -69,6 +75,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
   List<String> pincodeData = List();
   List<String> listData = List();
   List<String> idData = List();
+  List surveyFields = List();
 
   String country;
   String fullName;
@@ -92,6 +99,20 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
   List<String> productList = List();
   String lng, lat;
   String img64;
+
+
+  // Future<Map<String, String>> getDataFromSharedPreference() async {
+  //   // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   // // setState(() {
+  //   // user_id= sharedPreferences.getString("user_id");
+  //   // token = sharedPreferences.getString("accessToken");
+  //   //
+  //   // print("Body is :" + user_id);
+  //   // print("Header is: " + token);
+  //   // return {'body': user_id, 'header': token};
+  // }
+
+
 
   void getcurrentLocation() async {
     final position = await GeolocatorPlatform.instance.getCurrentPosition(
@@ -214,6 +235,8 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
       idData.add(widget.stateListResponse.data[i].id);
       print('listData :  $listData');
     }
+
+
 
     getcurrentLocation();
     fullName = '';
@@ -508,7 +531,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                     inputValue: country,
                                     list: countryList,
                                     text: 'Select country',
-                                    fn: (String newValue) {
+                                    onchanged: (String newValue) {
                                       setState(() {
                                         country = newValue;
                                         inputDoc["country"] = country;
@@ -538,7 +561,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                       //     ? ['State']
                                       //     : widget.stateListResponse.data,
                                       text: 'Select state',
-                                      fn: (String newValue) async {
+                                      onchanged: (String newValue) async {
                                         setState(() {
                                           state = newValue;
                                           inputDoc["state"] = state;
@@ -621,7 +644,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                         ? ['Please Select State First']
                                         : districtList.toSet().toList(),
                                     text: 'Select district',
-                                    fn: (String newValue) {
+                                    onchanged: (String newValue) {
                                       setState(() {
                                         district = newValue;
                                         inputDoc["district"] = district;
@@ -872,7 +895,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                   isLoading = !isLoading;
                                 });
                               });
-                            } else if (firstNameController.text == null) {
+                            } else if (firstNameController.text.isEmpty) {
                               CustomView.showInDialog(
                                   context, "Error", "Please fill full name",
                                   () {
@@ -881,7 +904,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                   isLoading = !isLoading;
                                 });
                               });
-                            } else if (addressController.text == null) {
+                            } else if (addressController.text.isEmpty) {
                               CustomView.showInDialog(
                                   context, "Error", "Please fill address", () {
                                 Navigator.of(context).pop();
@@ -889,7 +912,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                   isLoading = !isLoading;
                                 });
                               });
-                            } else if (villageController.text == null) {
+                            } else if (villageController.text.isEmpty) {
                               CustomView.showInDialog(
                                   context, "Error", "Please fill village", () {
                                 Navigator.of(context).pop();
@@ -897,7 +920,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                   isLoading = !isLoading;
                                 });
                               });
-                            } else if (postOfficeController.text == null) {
+                            } else if (postOfficeController.text.isEmpty) {
                               CustomView.showInDialog(
                                   context, "Error", "Please fill post office",
                                   () {
@@ -906,7 +929,7 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                   isLoading = !isLoading;
                                 });
                               });
-                            } else if (thanaController.text == null) {
+                            } else if (thanaController.text.isEmpty) {
                               CustomView.showInDialog(
                                   context, "Error", "Please fill thana", () {
                                 Navigator.of(context).pop();
@@ -958,7 +981,8 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                   isLoading = !isLoading;
                                 });
                               });
-                            } else {
+                            }
+                            else {
                               setState(() {
                                 isLoading = !isLoading;
                               });
@@ -966,17 +990,18 @@ class _ActiveSurveyFormState extends State<ActiveSurveyForm> {
                                   await ApiCall.getBanner();
                               if (bannerResponse.status == "success") {
                                 Navigator.of(context).push(
+
                                   MaterialPageRoute(
                                     builder: (context) => DynamicSurveyForm(
-                                      // bannerResponse: bannerResponse,
+                                      bannerResponse: bannerResponse,
                                       surveyForm: widget.surveyForm,
                                       surveyName: widget.surveyName,
                                       inputDoc: inputDoc,
                                       surveyId: widget.surveyId,
-
+                                      // userId: widget.bluAngel,
                                       // productList: productList,
-                                      lng: lng,
-                                      lat: lat,
+                                      lng: lng.toString(),
+                                      lat: lat.toString(),
                                       image: img64,
                                       // token: widget.token,
                                     ),

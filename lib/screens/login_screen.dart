@@ -456,9 +456,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         sharedPreferences =
                                                         await SharedPreferences
                                                             .getInstance();
-                                                    sharedPreferences.setString(
-                                                        "accessToken",
-                                                        verifyResponse.token);
+                                                    // sharedPreferences.setString(
+                                                    //     "accessToken",
+                                                    //     verifyResponse.token);
+
                                                     // sharedPreferences
                                                     //     .setString(
                                                     //         "tokenCall",
@@ -500,8 +501,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     setState(() {
                                                       ApiCall.token =
                                                           verifyResponse.token;
-                                                      print(
+                                                      print("access token is:"+
                                                           verifyResponse.token);
+                                                      sharedPreferences.setString("accessToken", verifyResponse.token
+                                                          .toString());
                                                       ApiCall.tokenCall =
                                                           verifyResponse
                                                               .result.id

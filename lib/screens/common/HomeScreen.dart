@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String bannerResponseImg1;
   String bannerResponseImg2;
   String accessToken;
+  String user_id;
   String startDate, lastDate;
   int top_nav;
   int side_nav;
@@ -39,12 +40,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int backendS = 0;
   AppUpdateInfo _updateInfo;
 
-  getDataFromSharedPrefs() async {
+  Future<Map<String, String>> getDataFromSharedPreference() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    // setState(() {
+    user_id= sharedPreferences.getString("user_id");
+    accessToken = sharedPreferences.getString("accessToken");
 
-    setState(() {
-      accessToken = sharedPreferences.getString("access_token");
-    });
+    print("Body is :" + user_id);
+    print("Header is: " + accessToken);
+    return {'body': user_id, 'header': accessToken};
   }
 
   getPackageInfo() async {
@@ -115,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    getDataFromSharedPrefs();
+    // getDataFromSharedPrefs();
     getDataFromSettings();
     getPackageInfo();
 
@@ -130,270 +134,301 @@ class _HomeScreenState extends State<HomeScreen> {
       _scaffoldKey.currentState.openDrawer();
     }, () {}, isLeading: true, isAction: true, title: 'home', top_nav: top_nav);
 
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: appBar,
-      drawer: CustomView.drawerCustom(context, side_nav),
-      body: WillPopScope(
-        onWillPop: () async => showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                    title: Text('Are you sure you want to quit?'),
-                    actions: <Widget>[
-                      RaisedButton(
-                        child: Text('exit app'),
-                        onPressed: () => SystemNavigator.pop(),
+    return FutureBuilder(
+      future: getDataFromSharedPreference(),
+        builder: (context, snapshot){
+      if(snapshot.hasData)
+        {
+          Map<String, String> bodyData = snapshot.data;
+          return Scaffold(
+            key: _scaffoldKey,
+            appBar: appBar,
+            drawer: CustomView.drawerCustom(context, side_nav),
+            body: WillPopScope(
+              onWillPop: () async => showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                      title: Text('Are you sure you want to quit?'),
+                      actions: <Widget>[
+                        RaisedButton(
+                          child: Text('exit app'),
+                          onPressed: () => SystemNavigator.pop(),
+                        ),
+                        RaisedButton(
+                            child: Text('cancel'),
+                            onPressed: () => Navigator.of(context).pop(false)),
+                      ])),
+              child: SingleChildScrollView(
+                child: CustomView.buildContainerBackgroundImage(
+                  context: context,
+                  child: (nativeAppversion == null && backendAppVersion == null)
+                      ? CircularProgressIndicator()
+                      : (nativeAppversion.compareTo(backendAppVersion) > 0)
+                      ? AlertDialog(
+                    title: Text(
+                      "App Update Available",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
-                      RaisedButton(
-                          child: Text('cancel'),
-                          onPressed: () => Navigator.of(context).pop(false)),
-                    ])),
-        child: SingleChildScrollView(
-          child: CustomView.buildContainerBackgroundImage(
-            context: context,
-            child: (nativeAppversion == null && backendAppVersion == null)
-                ? CircularProgressIndicator()
-                : (nativeAppversion.compareTo(backendAppVersion) < 0)
-                    ? AlertDialog(
-                        title: Text(
-                          "App Update Available",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                    ),
+                    content: Text(
+                      "Please update the app to continue",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[600]),
+                    ),
+                    actions: [
+                      Center(
+                        child: new FlatButton(
+                          child: Text("Ok"),
+                          onPressed: updateApp,
+                        ),
+                      ),
+                    ],
+                  )
+                      : ListView(
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        color: Color(s_background_color),
+                        height: 40,
+                        child: AnyMargueeWidget(
+                          speedRate: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(
+                              sliderText,
+                              style: TextStyle(
+                                  color: Color(s_font_color), fontSize: 20),
+                            ),
                           ),
                         ),
-                        content: Text(
-                          "Please update the app to continue",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600]),
-                        ),
-                        actions: [
-                          Center(
-                            child: new FlatButton(
-                              child: Text("Ok"),
-                              onPressed: updateApp,
+                      ),
+
+                      Row(
+                        children: [
+                          Container(
+                            margin:
+                            const EdgeInsets.only(top: 10, left: 10),
+                            height: 100,
+                            width: 55,
+                            child: Image.network(
+                              bannerResponseImg2,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 20),
+                            child: Container(
+                              margin:
+                              const EdgeInsets.only(top: 10, left: 10),
+                              height: 100,
+                              width: 100,
+                              child: Image.network(bannerResponseImg1),
                             ),
                           ),
                         ],
-                      )
-                    : ListView(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            color: Color(s_background_color),
-                            height: 40,
-                            child: AnyMargueeWidget(
-                              speedRate: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text(
-                                  sliderText,
-                                  style: TextStyle(
-                                      color: Color(s_font_color), fontSize: 20),
+                      ),
+                      Container(
+                        alignment: Alignment.topRight,
+                        margin: const EdgeInsets.only(top: 10),
+                        child: CustomView.buildContainerCardUI(
+                          h: 240,
+                          w: 100,
+                          color: Colors.transparent,
+                          context: context,
+                          child: CustomView.buildLargeContainer(
+                            margin: 0.0,
+                            color: Color(0xFF8fe9ff),
+                            color1: Colors.transparent,
+                            listColor: ksubBg,
+                            child: ListView(
+                              children: <Widget>[
+                                Container(
+                                  margin: const EdgeInsets.only(top: 20),
+                                  child: Image.asset(
+                                    'assets/images/Logo-01.png',
+                                    fit: BoxFit.contain,
+                                    width: 200,
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-
-                          Row(
-                            children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.only(top: 10, left: 10),
-                                height: 100,
-                                width: 55,
-                                child: Image.network(
-                                  bannerResponseImg2,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(left: 20),
-                                child: Container(
+                                Container(
                                   margin:
-                                      const EdgeInsets.only(top: 10, left: 10),
-                                  height: 100,
-                                  width: 100,
-                                  child: Image.network(bannerResponseImg1),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            alignment: Alignment.topRight,
-                            margin: const EdgeInsets.only(top: 10),
-                            child: CustomView.buildContainerCardUI(
-                              h: 240,
-                              w: 100,
-                              color: Colors.transparent,
-                              context: context,
-                              child: CustomView.buildLargeContainer(
-                                margin: 0.0,
-                                color: Color(0xFF8fe9ff),
-                                color1: Colors.transparent,
-                                listColor: ksubBg,
-                                child: ListView(
-                                  children: <Widget>[
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 20),
-                                      child: Image.asset(
-                                        'assets/images/Logo-01.png',
-                                        fit: BoxFit.contain,
-                                        width: 200,
-                                      ),
-                                    ),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.only(top: 20, bottom: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: <Widget>[
-                                          CustomView.buildTapCard(
-                                              context,
-                                              'Active',
-                                              'ACTIVE SURVEY', () async {
-                                            final SurveyListResponse
-                                                surveyListResponse =
-                                                await ApiCall.getSurveyList();
-                                            final BannerResponse
-                                                bannerResponse =
-                                                await ApiCall.getBanner();
-                                            if (surveyListResponse.status ==
-                                                    "success" &&
-                                                bannerResponse.status ==
-                                                    "success") {
-                                              SharedPreferences
-                                                  sharedPreferences =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              sharedPreferences.setString(
-                                                  "accessToken",
-                                                  surveyListResponse.token);
-                                              setState(() {
-                                                ApiCall.token =
-                                                    surveyListResponse.token;
-                                              });
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          SurveyList(
-                                                            bannerResponse:
-                                                                bannerResponse,
-                                                            surveyListResponse:
-                                                                surveyListResponse,
-                                                          )));
-                                            }
-                                            // });
-                                          }),
-                                          CustomView.buildTapCard(
-                                              context,
-                                              'Complete-Icon',
-                                              'completed survey', () async {
-                                            final SurveyListResponse
-                                                surveyListResponse =
-                                                await ApiCall.getSurveyList();
-                                            final BannerResponse
-                                                bannerResponse =
-                                                await ApiCall.getBanner();
-                                            if (surveyListResponse.status ==
-                                                    "success" &&
-                                                bannerResponse.status ==
-                                                    "success") {
-                                              setState(() {
-                                                ApiCall.token =
-                                                    surveyListResponse.token;
-                                              });
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
+                                  EdgeInsets.only(top: 20, bottom: 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      CustomView.buildTapCard(
+                                          context,
+                                          'Active',
+                                          'ACTIVE SURVEY', () async {
+                                        // final SurveyListResponse
+                                        //     surveyListResponse =
+                                        //     await ApiCall.getSurveyList(accessToken , user_id);
+                                        final BannerResponse
+                                        bannerResponse =
+                                        await ApiCall.getBanner();
+                                        if (
+                                        // surveyListResponse.status ==
+                                        //         "success" &&
+                                        bannerResponse.status ==
+                                            "success") {
+                                          // SharedPreferences
+                                          //     sharedPreferences =
+                                          //     await SharedPreferences
+                                          //         .getInstance();
+                                          // sharedPreferences.setString(
+                                          //     "accessToken",
+                                          //     surveyListResponse.token);
+                                          // setState(() {
+                                          //   ApiCall.token =
+                                          //       surveyListResponse.token;
+                                          // });
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
                                                   builder: (context) =>
-                                                      AssignReportSurvey(
-                                                    bannerResponse:
+                                                      SurveyList(
+                                                        bannerResponse:
                                                         bannerResponse,
+                                                        // surveyListResponse:
+                                                        //     surveyListResponse,
+                                                      )));
+                                        }
+                                        else {
+                                          print("The call was not successfull");
+                                        }
+                                        // });
+                                      }),
+                                      CustomView.buildTapCard(
+                                          context,
+                                          'Complete-Icon',
+                                          'completed survey', () async {
+                                        // final SurveyListResponse
+                                        // surveyListResponse =
+                                        // await ApiCall.getSurveyList(accessToken , user_id);
+                                        final BannerResponse
+                                        bannerResponse =
+                                        await ApiCall.getBanner();
+                                        if (
+                                        // surveyListResponse.status ==
+                                        //     "success" &&
+                                            bannerResponse.status ==
+                                                "success") {
+                                          setState(() {
+                                            // ApiCall.token =
+                                            //     surveyListResponse.token;
+                                          });
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AssignReportSurvey(
+                                                    bannerResponse:
+                                                    bannerResponse,
                                                     changeReport: true,
-                                                    surveyListResponse:
-                                                        surveyListResponse,
+                                                    // surveyListResponse:
+                                                    //     surveyListResponse,
                                                     withoutDate: true,
                                                   ),
-                                                ),
-                                              );
-                                            }
-                                          }),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: <Widget>[
-                                          CustomView.buildTapCard(
-                                              context,
-                                              'ReportPage-Icon',
-                                              'report page', () async {
-
-                                            final SurveyListResponse
-                                                surveyListResponse =
-                                                await ApiCall.getSurveyList();
-
-                                            final BannerResponse
-                                                bannerResponse =
-                                                await ApiCall.getBanner();
-                                            if (surveyListResponse.status ==
-                                                    "success" &&
-                                                bannerResponse.status ==
-                                                    "success") {
-                                              setState(() {
-                                                ApiCall.token =
-                                                    surveyListResponse.token;
-                                              });
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AssignReportSurvey(
-                                                    bannerResponse:
-                                                        bannerResponse,
-                                                    changeReport: true,
-                                                    surveyListResponse:
-                                                        surveyListResponse,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          }),
-                                          CustomView.buildTapCard(
-                                              context,
-                                              'EditProfile-Icon-',
-                                              'edit profile', () async {
-                                            final BannerResponse
-                                                bannerResponse =
-                                                await ApiCall.getBanner();
-                                            if (bannerResponse.status ==
-                                                "success") {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          EditProfile(
-                                                            bannerResponse:
-                                                                bannerResponse,
-                                                          )));
-                                            }
-                                          }),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                            ),
+                                          );
+                                        }
+                                      }),
+                                    ],
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      CustomView.buildTapCard(
+                                          context,
+                                          'ReportPage-Icon',
+                                          'report page', () async {
+
+                                        // final SurveyListResponse
+                                        // surveyListResponse =
+                                        // await ApiCall.getSurveyList(accessToken, user_id
+                                        //     );
+
+                                        final BannerResponse
+                                        bannerResponse =
+                                        await ApiCall.getBanner();
+                                        if (
+                                        // surveyListResponse.status ==
+                                        //     "success" &&
+                                            bannerResponse.status ==
+                                                "success") {
+                                          setState(() {
+                                            // ApiCall.token =
+                                            //     surveyListResponse.token;
+                                          });
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AssignReportSurvey(
+                                                    bannerResponse:
+                                                    bannerResponse,
+                                                    changeReport: true,
+                                                    // surveyListResponse:
+                                                    //     surveyListResponse,
+                                                  ),
+                                            ),
+                                          );
+                                        }
+                                      }),
+                                      CustomView.buildTapCard(
+                                          context,
+                                          'EditProfile-Icon-',
+                                          'edit profile', () async {
+                                        final BannerResponse
+                                        bannerResponse =
+                                        await ApiCall.getBanner();
+                                        if (bannerResponse.status ==
+                                            "success") {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EditProfile(
+                                                        bannerResponse:
+                                                        bannerResponse,
+                                                      )));
+                                        }
+                                      }),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      else{
+        return Scaffold(
+          body: Container(
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  Text("Loading Home page" , style: TextStyle(fontSize: 30),),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        );
+      }
+    });
   }
 }

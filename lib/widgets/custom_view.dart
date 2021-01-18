@@ -324,6 +324,7 @@ class CustomView {
         initialValue: prefilledText,
         key: key,
         expands: false,
+
         validator: validator,
         style: TextStyle(color: Color(0xff2d1f76), fontSize: 20.0),
         controller: controller,
@@ -358,6 +359,71 @@ class CustomView {
       ),
     );
   }
+
+  // static Widget editTextFieldDynamic(
+  //     {double height,
+  //       TextEditingController controller,
+  //       String labelText,
+  //       String hint,
+  //       Color color,
+  //       TextInputType keyborad = TextInputType.text,
+  //       int maxLength,
+  //       int maxLines,
+  //       double size,
+  //       int lengthLimiting,
+  //       Function fn,
+  //       Function validator,
+  //       ValueKey key,
+  //       String prefilledText}) {
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
+  //     margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+  //     // color: Colors.blue[50],
+  //     // alignment: Alignment.bottomCenter,
+  //     height: height,
+  //     // margin: EdgeInsets.symmetric(
+  //     //   horizontal: 20.0,
+  //     //   vertical: 4,
+  //     // ),
+  //     child: TextField(
+  //
+  //       key: key,
+  //       expands: false,
+  //
+  //
+  //       style: TextStyle(color: Color(0xff2d1f76), fontSize: 20.0),
+  //       controller: controller,
+  //       textAlign: TextAlign.start,
+  //       keyboardType: keyborad,
+  //       inputFormatters: [
+  //         new LengthLimitingTextInputFormatter(lengthLimiting),
+  //       ],
+  //       maxLines: maxLines,
+  //       maxLength: maxLength,
+  //       onChanged: fn,
+  //       decoration: InputDecoration(
+  //           isDense: true,
+  //           labelText: labelText,
+  //           // contentPadding:
+  //           //     EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+  //           hintText: hint,
+  //           hintStyle: TextStyle(
+  //             color: color,
+  //             fontSize: size,
+  //           ),
+  //           filled: true,
+  //           fillColor: Color(0xffbdd5f1),
+  //           enabledBorder: OutlineInputBorder(
+  //             borderSide: BorderSide(
+  //               color: Colors.transparent,
+  //             ),
+  //           ),
+  //           border: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(5.0),
+  //           )),
+  //     ),
+  //   );
+  // }
 
   static bool emailValidation(String input) {
     var valid = false;
@@ -614,7 +680,7 @@ class CustomView {
     String inputValue,
     List<String> list,
     String text,
-    Function fn,
+    Function onchanged,
     Function fn1,
     ValueKey key,
   }) {
@@ -659,10 +725,11 @@ class CustomView {
             ),
           ),
           iconSize: 20,
-          onChanged: fn,
+          onChanged: onchanged,
           items: list.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               onTap: fn1,
+              
               value: value,
               child: Container(
                   padding: EdgeInsets.only(left: 15),
